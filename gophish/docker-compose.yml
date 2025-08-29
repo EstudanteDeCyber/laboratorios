@@ -1,0 +1,20 @@
+version: '3'
+services:
+  gophish:
+    image: gophish/gophish:latest
+    ports:
+      - "3333:3333" # Admin interface
+      - "8080:8080" # Phishing server HTTP
+      - "8443:8443" # Phishing server HTTPS
+    volumes:
+      - ./gophish_data:/app
+    environment:
+      - DB_TYPE=sqlite3
+      - DB_PATH=/app/gophish.db
+      - ADMIN_LISTEN_ADDRESS=0.0.0.0:3333
+      - PHISH_LISTEN_ADDRESS=0.0.0.0:8080
+      - PHISH_HTTPS_LISTEN_ADDRESS=0.0.0.0:8443
+    restart: unless-stopped
+
+volumes:
+  gophish_data:

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  nessus:
+    image: tenable/nessus:latest-ubuntu
+    container_name: nessus_essentials
+    ports:
+      - "8834:8834"  # Porta padrão para o Nessus Web UI
+    environment:
+      - NI_LOCAL=1  # Define que o Nessus deve rodar localmente
+    volumes:
+      - nessus_data:/opt/nessus  # Volume para persistir dados do Nessus
+    restart: always  # Garante que o container reinicie automaticamente em caso de falhas
+    networks:
+      - nessus_net
+    # Usar o Nessus Essentials exige que a chave de ativação seja inserida após o primeiro login.
+    # A chave deve ser inserida manualmente no processo inicial após o primeiro acesso à interface web.
+
+volumes:
+  nessus_data:  # Volume persistente para o Nessus
+
+networks:
+  nessus_net:  # Rede isolada para o Nessus, garantindo segurança entre containers
+    driver: bridge

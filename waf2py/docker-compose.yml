@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  waf2py:
+    image: waf2py-container:1.0
+    container_name: waf2py
+    ports:
+      - "62443:62443"
+    restart: always
