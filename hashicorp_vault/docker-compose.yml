@@ -23,8 +23,9 @@ services:
     - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
     command: vault server -config=/vault/config/vault-config.hcl
     networks:
-    - services_net
+      - sec-tools
 
 networks:
-  services_net:
+  sec-tools:
+    name: sec-tools
     driver: bridge

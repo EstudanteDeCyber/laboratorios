@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nessus:
     image: tenable/nessus:latest-ubuntu
@@ -10,9 +8,9 @@ services:
       - NI_LOCAL=1  # Define que o Nessus deve rodar localmente
     volumes:
       - nessus_data:/opt/nessus  # Volume para persistir dados do Nessus
-    restart: always  # Garante que o container reinicie automaticamente em caso de falhas
+    restart: unless-stopped
     networks:
-      - nessus_net
+      - sec-tools
     # Usar o Nessus Essentials exige que a chave de ativação seja inserida após o primeiro login.
     # A chave deve ser inserida manualmente no processo inicial após o primeiro acesso à interface web.
 
@@ -20,5 +18,6 @@ volumes:
   nessus_data:  # Volume persistente para o Nessus
 
 networks:
-  nessus_net:  # Rede isolada para o Nessus, garantindo segurança entre containers
+  sec-tools:
+    name: sec-tools
     driver: bridge

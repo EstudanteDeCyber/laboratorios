@@ -21,3 +21,10 @@ services:
     image: immauss/openvas:latest
 volumes:
   openvas:
+    networks:
+      - sec-tools
+
+networks:
+  sec-tools:
+    name: sec-tools
+    driver: bridge

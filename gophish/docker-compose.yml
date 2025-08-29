@@ -1,4 +1,3 @@
-version: '3'
 services:
   gophish:
     image: gophish/gophish:latest
@@ -15,6 +14,13 @@ services:
       - PHISH_LISTEN_ADDRESS=0.0.0.0:8080
       - PHISH_HTTPS_LISTEN_ADDRESS=0.0.0.0:8443
     restart: unless-stopped
+    networks:
+      - sec-tools
 
 volumes:
   gophish_data:
+
+networks:
+  sec-tools:
+    name: sec-tools
+    driver: bridge
