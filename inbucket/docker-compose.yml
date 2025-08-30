@@ -1,0 +1,16 @@
+services:
+  gophish:
+    image: inbucket/inbucket
+	container_name: inbucket
+    ports:
+      - "8025:8025" # Admin interface
+      - "10025:10025" # Mail interface
+    volumes:
+    restart: unless-stopped
+    networks:
+      - sec-tools
+
+networks:
+  sec-tools:
+    name: sec-tools
+    driver: bridge
