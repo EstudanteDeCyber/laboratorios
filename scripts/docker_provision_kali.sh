@@ -1,4 +1,4 @@
-ii#!/bin/bash
+#!/bin/bash
 
 # Este script automatiza o provisionamento do Docker e outras ferramentas
 # essenciais em um ambiente Kali Linux.
