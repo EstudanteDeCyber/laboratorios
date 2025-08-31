@@ -40,30 +40,21 @@ systemctl enable chrony
 chronyc sources
 
 ## Instalação do Docker seguindo o procedimento oficial do Kali
-echo "Instalando Docker do repositório oficial..."
-# Adicionar a chave GPG oficial do Docker
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-chmod a+r /etc/apt/keyrings/docker.gpg
+sudo apt install -y docker.io
+sudo systemctl enable docker --now && sudo systemctl start docker --now
+sudo usermod -aG docker vagrant
 
 # Adicionar o repositório do Docker à lista de fontes do APT
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   tee /etc/apt/sources.list.d/docker.list > /dev/null
+curl -fsSL https://download.docker.com/linux/debian/gpg |
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
 # Instalar Docker Engine, CLI, Containerd e Docker Compose
 echo "Executando a instalação do Docker Engine e Docker Compose..."
-apt update
-apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-## Iniciar e habilitar Docker
-echo "Habilitando e iniciando o serviço Docker..."
-systemctl start docker
-systemctl enable docker
-
-# Adicionar o usuário 'vagrant' ao grupo 'docker'
-usermod -aG docker vagrant
+apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
 
 ## Aguardar o Docker subir
 echo "Aguardando o serviço Docker ficar pronto..."
