@@ -44,14 +44,11 @@ bash docker_provision.sh
 
 # --- Download e UP dos Containers/Ferramentas ---
 echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."
+bash up_all_containers_vuln.sh
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
 bash ajuste_teclado.sh
-
-# Todos os outros containers (Docker-Vuln)
-echo "Subindo todos os Containers..."
-bash up_all_containers_vuln.sh
 
 # --- Listar Portas dos Containers ---
 echo "Listando portas dos containers para referência..."
