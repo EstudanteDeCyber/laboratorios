@@ -52,7 +52,7 @@ bash ajuste_teclado.sh
 
 # Todos os outros containers (Docker-Vuln)
 echo "Subindo todos os Containers..."
-cd /home/vagrant/lab-sec/scripts
+cd /home/vagrant/lab-sec/
 bash up_all_containers_vuln.sh
 
 
