@@ -6,4 +6,4 @@ docker compose -f ../docker-waf2py/docker-compose.yml \
                -f ../docker-inbucket/docker-compose.yml \
                -f ../docker-openvas/docker-compose.yml \
                -f ../docker-splunk/docker-compose.yml \
-               up -d
+               down

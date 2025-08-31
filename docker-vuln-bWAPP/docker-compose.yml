@@ -1,0 +1,14 @@
+services:
+  bwapp:
+    image: hackersploit/bwapp-docker
+    container_name: bWAPP
+    ports:
+      - "8082:80"
+      - "3309:3306"
+    restart: unless-stopped
+    networks:
+      - bwapp_net
+
+networks:
+  bwapp_net:
+    driver: bridge

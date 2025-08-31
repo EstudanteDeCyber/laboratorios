@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+#####################################################################
+##						
+## Para rodar capturando os outputs:			
+##								
+## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append  
+##								
+#####################################################################
+
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.boot_timeout = 900
+
+# ===================================================================
+#  VM Kali Linux - 10.10.10.10
+# ===================================================================
+  config.vm.define "Kali" do |kali|
+    kali.vm.box = "kalilinux/rolling"
+    kali.vm.hostname = "kali"
+	
+	kali.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.name = "Kali"
+      vb.memory = "4096"
+      vb.cpus = 2
+	  vb.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+	  vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
+    end
+	
+   # Provisionamento específico para o kali
+  config.vm.provision "shell", inline: <<-SHELL
+
+	# Baixa o script de provisionamento principal do GitHub
+    wget -O /tmp/provisionamento_kali.sh https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/refs/heads/main/scripts/provisionamento_kali.sh
+    chmod +x /tmp/provisionamento_kali.sh
+
+    # Execute o script
+    /tmp/provisionamento_kali.sh
+
+	SHELL
+  end
+end

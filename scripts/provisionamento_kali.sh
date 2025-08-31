@@ -58,9 +58,11 @@ echo "Criando arquivos de scripts e lista de apps..."
 cat << 'EONET' > /root/redes.sh
 for ip in 20 30 40 50 101 102; do ping -c 1 -w 1 10.10.10."$ip" | grep ttl; done
 EONET
+mv /root/redes.sh /usr/bin/redes.sh && chmod 755 /usr/bin/redes.sh
+ln -s /usr/bin/redes.sh redes
 
 # Criar a lista de apps
-cat << 'EONET' > /root/lista_apps
+cat << 'EONET' > /home/vagrant/lista_apps
 Docker-Tools: ################################################################
 Docker-Tools: ## Aplicacoes Disponivies abaixo. Divirta-se sem moderacao!!
 Docker-Tools: ##                   Tire um pint e acesse-as pelo KALI
@@ -108,11 +110,7 @@ Docker-Vuln: juice-shop                      (porta interna: 3000)
 EONET
 
 # Ajustar a permissão para a lista de apps
-chmod 744 /root/lista_apps
-
-# Corrigir o nome de usuário 'agrant' para 'vagrant'
-cd /home/vagrant/ && chown vagrant:vagrant /home/vagrant/*
-chmod u+x *.sh
+chmod 755 /home/vagrant/lista_apps
 
 # --- Ajustar Placa de Rede ---
 echo "Ajustando a configuração da rede..."

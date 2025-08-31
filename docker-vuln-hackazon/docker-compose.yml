@@ -1,0 +1,7 @@
+services:
+  hackazon:
+    image: bepsoccer/all-in-one-hackazon
+    container_name: hackazon
+    ports:
+      - "8089:80"
+    restart: unless-stopped

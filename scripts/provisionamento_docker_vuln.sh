@@ -50,7 +50,10 @@ echo "Ajustando o layout do teclado..."
 cd /home/vagrant/lab-sec/scripts
 bash ajuste_teclado.sh
 
-
+# Todos os outros containers (Docker-Vuln)
+echo "Subindo todos os Containers..."
+cd /home/vagrant/lab-sec/scripts
+bash up_all_containers_vuln.sh
 
 
 

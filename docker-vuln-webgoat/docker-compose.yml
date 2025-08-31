@@ -1,0 +1,8 @@
+services:
+  webgoat:
+    image: webgoat/webgoat
+    container_name: WebGoat
+    ports:
+      - "8084:8080"
+      - "9090:9090"
+    restart: unless-stopped

@@ -1,0 +1,7 @@
+services:
+  dsvw:
+    image: appsecco/dsvw
+    container_name: appsecco_dsvw
+    ports:
+      - "8085:8000"
+    restart: unless-stopped

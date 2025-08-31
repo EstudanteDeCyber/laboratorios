@@ -1,0 +1,7 @@
+services:
+  badstore:
+    image: ghcr.io/jvhoof/badstore-docker:main
+    container_name: badstore
+    ports:
+      - "8083:80"
+    restart: unless-stopped

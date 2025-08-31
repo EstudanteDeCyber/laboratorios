@@ -56,10 +56,10 @@ cd /home/vagrant/lab-sec/docker-hashicorp_vault/
 chmod u+x setup.sh && sudo bash setup.sh
 sudo chmod 644 /var/services/vault/userconfig/tls/vault.key
 
-# Todos os outros containers (Docker-Tools e Docker-Vuln)
+# Todos os outros containers (Docker-Tools)
 echo "Subindo todos os outros containers..."
 cd /home/vagrant/lab-sec/scripts
-bash up_all_containers.sh
+bash up_all_containers_tools.sh
 
 # DefectDojo
 echo "Configurando DefectDojo..."

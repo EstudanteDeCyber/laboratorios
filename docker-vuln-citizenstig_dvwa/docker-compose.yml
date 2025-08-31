@@ -1,0 +1,16 @@
+services:
+  dvwa:
+    image: citizenstig/dvwa
+    container_name: citizenstigdvwa
+    ports:
+      - "8080:80"
+      - "3307:3306"
+    restart: unless-stopped
+    environment:
+      - MYSQL_PASS=Chang3ME!
+    networks:
+      - dvwa_net
+
+networks:
+  dvwa_net:
+    driver: bridge

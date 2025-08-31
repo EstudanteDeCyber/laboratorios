@@ -1,0 +1,10 @@
+services:
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:latest
+    container_name: zap-webswing
+    ports:
+      - "2222:8080"
+      - "3333:8990"
+    restart: unless-stopped
+    command: ["zap-webswing.sh"]
+    user: "zap"
