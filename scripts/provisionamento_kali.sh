@@ -52,7 +52,7 @@ git clone https://github.com/brunobotelhobr/My-Tools.git
 cd My-Tools && git clone https://github.com/brunobotelhobr/My-IP-Calculator.git
 
 # --- Criação de Arquivos de Script e Lista de Apps ---
-echo "Criando arquivos de script e lista de apps..."
+echo "Criando arquivos de scripts e lista de apps..."
 
 # Criar o script de rede
 cat << 'EONET' > /root/redes.sh
@@ -135,4 +135,7 @@ address 192.168.56.10
 netmask 255.255.255.0
 EONET
 
+# --- Mensagem Final ---
+echo "Exibindo mensagem final..."
+bash msg_final.sh 10.10.10.10
 echo "Configurações concluídas !!!"

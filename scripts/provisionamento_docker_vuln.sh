@@ -4,7 +4,7 @@
 # para o ambiente de laboratório de segurança.
 
 # --- Ajustar Placa de REDE ---
-echo "Configurando a placa de rede com IP 10.10.10.101..."
+echo "Configurando a placa de rede com IP 10.10.10.102..."
 cp /etc/network/interfaces /etc/network/interfaces.bak || true
 cat << 'EONET' > /etc/network/interfaces
 auto lo
@@ -12,7 +12,7 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-address 10.10.10.101
+address 10.10.10.102
 netmask 255.255.255.0
 EONET
 
@@ -43,33 +43,18 @@ echo "Iniciando o provisionamento e instalação do Docker..."
 bash docker_provision.sh
 
 # --- Download e UP dos Containers/Ferramentas ---
-echo "Iniciando o deploy dos containers de ferramentas ..."
-
-# Horusec
-echo "Configurando Horusec..."
-cd /home/vagrant/lab-sec/horusec
-chmod u+x setup.sh && bash setup.sh
-
-# HashiCorp Vault
-echo "Configurando HashiCorp Vault..."
-cd /home/vagrant/lab-sec/docker-hashicorp_vault/
-chmod u+x setup.sh && sudo bash setup.sh
-sudo chmod 644 /var/services/vault/userconfig/tls/vault.key
-
-# Todos os outros containers (Docker-Tools e Docker-Vuln)
-echo "Subindo todos os outros containers..."
-cd /home/vagrant/lab-sec/scripts
-bash up_all_containers.sh
-
-# DefectDojo
-echo "Configurando DefectDojo..."
-cd /home/vagrant/lab-sec/docker-django-DefectDojo
-chmod u+x setup.sh && bash setup.sh
+echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
 cd /home/vagrant/lab-sec/scripts
 bash ajuste_teclado.sh
+
+
+
+
+
+
 
 # --- Listar Portas dos Containers ---
 echo "Listando portas dos containers para referência..."
@@ -77,6 +62,6 @@ bash listar-container-portas.sh
 
 # --- Mensagem Final ---
 echo "Exibindo mensagem final..."
-bash msg_final.sh 10.10.10.101
+bash msg_final.sh 10.10.10.102
 
 echo "Provisionamento do nó concluído!"
