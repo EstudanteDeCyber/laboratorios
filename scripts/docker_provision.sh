@@ -3,7 +3,7 @@
 timedatectl set-timezone America/Sao_Paulo
 
 ## Update da maquina virtual
-apt update
+apt update && apt-mark hold openssh-server
 NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" upgrade
 
 ## Verificando e removendo instalação antiga do Docker, caso haja
