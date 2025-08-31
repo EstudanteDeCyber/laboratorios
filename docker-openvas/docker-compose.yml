@@ -19,8 +19,6 @@ services:
       - "openvas:/data"
     container_name: openvas
     image: immauss/openvas:latest
-volumes:
-  openvas:
     networks:
       - sec-tools
 
