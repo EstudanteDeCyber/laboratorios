@@ -3,7 +3,7 @@
 # Script para exibir a mensagem final LINUX
 
 # Captura o endereço IP da máquina
-IP=$(hostname -I | awk '{print $1}')
+IP=$1
 
 echo "###########################################################"
 echo "##                                                       ##"
