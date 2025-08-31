@@ -1,7 +1,7 @@
 services:
   openvas:
     ports:
-      - "8080:9392"
+      - "7000:9392"
     environment:
       - "PASSWORD=admin"
       - "USERNAME=admin"
@@ -16,11 +16,14 @@ services:
       - "HTTPS=false"  # wether to use HTTPS or not
       - "GMP=9390"    # to enable see docs
     volumes:
-      - "openvas:/data"
+      - ./openvas_data:/data
     container_name: openvas
     image: immauss/openvas:latest
     networks:
       - sec-tools
+
+volumes:
+  openvas_data:
 
 networks:
   sec-tools:
