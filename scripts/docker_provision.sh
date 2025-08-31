@@ -19,7 +19,7 @@ done
 echo
 echo "Instalacao de pacotes pre-requisitos..."
 echo
-apt install -y htop unzip curl git ca-certificates lsb-release gnupg docker-compose
+apt install -y htop unzip curl git ca-certificates lsb-release gnupg docker-compose jq
 
 ## Adicionando a instalação e configuração do Chrony
 echo
