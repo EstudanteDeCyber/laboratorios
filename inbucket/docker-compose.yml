@@ -4,6 +4,7 @@ services:
     container_name: inbucket
     ports:
       - "8025:8025" # Admin interface
+      - "9000:9000" # Mail Interface
       - "10025:10025" # Mail interface
     restart: unless-stopped
     networks:

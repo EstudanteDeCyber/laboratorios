@@ -59,7 +59,7 @@ setup_directories() {
     mkdir -p /var/services/vault/{audit,config,data,file,logs,userconfig/tls,plugins}
     
     # Alterar permissões
-    chmod 777 -R /var/services/vault/userconfig
+    sudo chown -R 100:100 /var/services/vault/
     
     log_success "Estrutura de diretórios criada com sucesso"
     
