@@ -5,8 +5,12 @@ services:
       - "8000:8000" # Splunk web interface
       - "8089:8089" # Splunk management port
     environment:
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_PASSWORD=your_secure_password
+      - SPLUNK_PASSWORD=teste@1234
     volumes:
-      - ./splunk_data:/opt/splunk
+      - splunk_data:/opt/splunk/var/lib/splunk
     restart: unless-stopped
+
+volumes:
+  splunk_data:
