@@ -19,7 +19,7 @@ done
 echo
 echo "Instalacao de pacotes pre-requisitos..."
 echo
-apt install -y htop unzip curl git ca-certificates lsb-release gnupg docker-compose jq
+apt install -y htop unzip curl git ca-certificates lsb-release gnupg jq
 
 ## Adicionando a instalação e configuração do Chrony
 echo
@@ -54,6 +54,7 @@ echo
 sudo systemctl start docker
 sudo systemctl enable docker
 usermod -aG docker vagrant
+sudo apt install docker-compose
 
 ## Aguardar o Docker subir
 sleep 10
