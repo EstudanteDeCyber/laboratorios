@@ -12,7 +12,7 @@ echo "Baixando scripts do GitHub..."
 
 # Usando um loop para baixar os arquivos de forma mais eficiente
 SCRIPTS_TO_DOWNLOAD=(
-  "docker_provision.sh"
+  "docker_provision_kali.sh"
   "ajuste_teclado.sh"
   "burp_container.sh"
   "install_burpsuite_container.sh"
@@ -32,10 +32,10 @@ chmod u+x *.sh
 echo "Executando scripts de provisionamento..."
 
 # Executa os scripts um a um. A ordem é importante.
-bash docker_provision.sh
+bash ssh_user_config.sh
+bash docker_provision_kali.sh
 bash ajuste_teclado.sh
 bash install_burpsuite_container.sh
-bash ssh_user_config.sh
 
 # Move o script do burp_container para o diretório do usuário 'vagrant'
 echo "Movendo burp_container.sh para o diretório do usuário vagrant..."
