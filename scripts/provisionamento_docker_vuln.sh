@@ -47,17 +47,11 @@ echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráve
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
-cd /home/vagrant/lab-sec/scripts
 bash ajuste_teclado.sh
 
 # Todos os outros containers (Docker-Vuln)
 echo "Subindo todos os Containers..."
-cd /home/vagrant/lab-sec/
 bash up_all_containers_vuln.sh
-
-
-
-
 
 # --- Listar Portas dos Containers ---
 echo "Listando portas dos containers para referência..."
