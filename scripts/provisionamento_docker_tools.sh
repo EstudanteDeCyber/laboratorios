@@ -31,12 +31,11 @@ git clone https://github.com/EstudanteDeCyber/lab-sec.git
 echo "Configurando usuário e SSH..."
 cd /home/vagrant/lab-sec/scripts
 chmod u+x *
-bash ssh_user_config.sh
+sudo ./ssh_user_config.sh
 
 # --- Agendar Atualização do SSH via Crontab ---
 echo "Adicionando crontab para atualização do SSH..."
-# Use um comando mais robusto para crontab
-(crontab -l 2>/dev/null | grep -v 'openssh-server'; echo "@reboot apt-get update && apt-get install -y openssh-server") | crontab -
+sudo ./crontab_ssh.sh
 
 # --- Instalação do Docker ---
 echo "Iniciando o provisionamento e instalação do Docker..."
@@ -69,7 +68,7 @@ chmod u+x setup.sh && bash setup.sh
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
 cd /home/vagrant/lab-sec/scripts
-bash ajuste_teclado.sh
+sudo ./ajuste_teclado.sh
 
 # --- Listar Portas dos Containers ---
 echo "Listando portas dos containers para referência..."

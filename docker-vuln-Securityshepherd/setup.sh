@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Diretório de trabalho
-WORKDIR="/home/vagrant/docker-vuln-Securityshephard"
+WORKDIR="/home/vagrant/docker-vuln-Securityshepherd"
 
 # Atualiza os pacotes e instala as dependências
 sudo apt update
@@ -21,4 +21,5 @@ cd SecurityShepherd
 # Compila o projeto usando Maven com o perfil docker e ignora os testes
 sudo mvn -Pdocker clean install -DskipTests
 
-# Up Container                                                                                                          docker-compose up -d
+# Up Container
+docker compose up -d

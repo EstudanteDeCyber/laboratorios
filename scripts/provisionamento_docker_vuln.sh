@@ -31,12 +31,11 @@ git clone https://github.com/EstudanteDeCyber/lab-sec.git
 echo "Configurando usuário e SSH..."
 cd /home/vagrant/lab-sec/scripts
 chmod u+x *
-bash ssh_user_config.sh
+sudo ./ssh_user_config.sh
 
 # --- Agendar Atualização do SSH via Crontab ---
 echo "Adicionando crontab para atualização do SSH..."
-# Use um comando mais robusto para crontab
-(crontab -l 2>/dev/null | grep -v 'openssh-server'; echo "@reboot apt-get update && apt-get install -y openssh-server") | crontab -
+sudo ./crontab_ssh.sh
 
 # --- Instalação do Docker ---
 echo "Iniciando o provisionamento e instalação do Docker..."
@@ -51,26 +50,27 @@ bash up_all_containers_vuln.sh
 # --- Download e Build dos Containers Vulneraveis - NODEGOAT ---
 cd /home/vagrant/lab-sec/docker-vuln-NodeGoat/
 chmod u+x *.sh
-bash setup.sh
+sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - SECURITYSHEPERD ---
 cd /home/vagrant/lab-sec/docker-vuln-Securityshepherd/
 chmod u+x *.sh
-bash setup.sh
+sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - crAPI---
 cd /home/vagrant/lab-sec/docker-vuln-crAPI/
 chmod u+x *.sh
-bash setup.sh
+sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - FLASKAPP---
 cd /home/vagrant/lab-sec/docker-vuln-Flask_App/
 chmod u+x *.sh
-bash setup.sh
+sudo ./setup.sh
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
-bash ajuste_teclado.sh
+cd /home/vagrant/lab-sec/scripts
+sudo ./ajuste_teclado.sh
 
 # --- Listar Portas dos Containers ---
 echo "Listando portas dos containers para referência..."

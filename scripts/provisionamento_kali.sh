@@ -32,9 +32,9 @@ chmod u+x *.sh
 echo "Executando scripts de provisionamento..."
 
 # Executa os scripts um a um. A ordem é importante.
-bash ssh_user_config.sh
+sudo ./ssh_user_config.sh
 bash docker_provision_kali.sh
-bash ajuste_teclado.sh
+sudo ./ajuste_teclado.sh
 bash install_burpsuite_container.sh
 
 # Move o script do burp_container para o diretório do usuário 'vagrant'

@@ -16,4 +16,4 @@ cd NodeGoat
 docker-compose build
 
 # Up Container
-docker-compose up -d
+docker compose up -d
