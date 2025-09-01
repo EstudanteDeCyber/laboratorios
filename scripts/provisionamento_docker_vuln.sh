@@ -41,6 +41,7 @@ echo "Adicionando crontab para atualização do SSH..."
 # --- Instalação do Docker ---
 echo "Iniciando o provisionamento e instalação do Docker..."
 bash docker_provision.sh
+pt install docker-compose
 
 # --- Download e Build dos Containers Vulneraveis - NODEGOAT ---
 cd /home/vagrant/lab-sec/docker-vuln-NodeGoat/
