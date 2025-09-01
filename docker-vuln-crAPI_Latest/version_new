@@ -1,0 +1,8 @@
+#	  # 11 - crAPI Latest (nao testado - usa as mesmas portas do atual)
+#	  curl -o /tmp/crapi.zip https://github.com/OWASP/crAPI/archive/refs/heads/develop.zip
+#	  unzip /tmp/crapi.zip
+#	  mkdir -p /home/vagrant/crAPI-develop/deploy/docker
+#	  cd crAPI-develop/deploy/docker
+#	  docker compose pull
+#	  docker compose -f docker-compose.yml --compatibility up -d
+#	  LISTEN_IP="0.0.0.0" docker compose -f docker-compose.yml --compatibility up -d	  

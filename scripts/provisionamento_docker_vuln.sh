@@ -43,6 +43,11 @@ echo "Iniciando o provisionamento e instalação do Docker..."
 bash docker_provision.sh
 pt install docker-compose
 
+# --- Download e UP dos Containers Vulneraveis prontos ---
+echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."
+cd /home/vagrant/lab-sec/scripts/
+bash up_all_containers_vuln.sh
+
 # --- Download e Build dos Containers Vulneraveis - NODEGOAT ---
 cd /home/vagrant/lab-sec/docker-vuln-NodeGoat/
 chmod u+x *.sh
@@ -53,10 +58,15 @@ cd /home/vagrant/lab-sec/docker-vuln-Securityshepherd/
 chmod u+x *.sh
 bash setup.sh
 
-# --- Download e UP dos demais Containers Vulneraveis ---
-echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."
-cd /home/vagrant/lab-sec/scripts/
-bash up_all_containers_vuln.sh
+# --- Download e Build dos Containers Vulneraveis - crAPI---
+cd /home/vagrant/lab-sec/docker-vuln-crAPI/
+chmod u+x *.sh
+bash setup.sh
+
+# --- Download e Build dos Containers Vulneraveis - FLASKAPP---
+cd /home/vagrant/lab-sec/docker-vuln-Flask_App/
+chmod u+x *.sh
+bash setup.sh
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."

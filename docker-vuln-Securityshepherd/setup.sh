@@ -20,3 +20,5 @@ cd SecurityShepherd
 
 # Compila o projeto usando Maven com o perfil docker e ignora os testes
 sudo mvn -Pdocker clean install -DskipTests
+
+# Up Container                                                                                                          docker-compose up -d

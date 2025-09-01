@@ -17,8 +17,6 @@ docker compose \
   -f ../docker-vuln-webgoat/docker-compose.yml \
   -f ../docker-vuln-WrongSecrets/docker-compose.yml \
   -f ../docker-vuln-zap-webswing/docker-compose.yml \
-  -f ../docker-vuln-NodeGoat/NodeGoat/docker-compose.yml \
-  -f ../docker-vuln-Securityshepherd/SecurityShepherd/docker-compose.yml \
   up -d
 
 echo "Processo de inicialização concluído. Verifique o status com 'docker ps'."

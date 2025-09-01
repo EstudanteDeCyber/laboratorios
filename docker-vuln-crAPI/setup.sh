@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Diretório de trabalho
-WORKDIR="/home/vagrant"
+WORKDIR="/home/vagrant/docker-vuln-crAPI"
 
 # Vai para o diretório de trabalho
 cd "$WORKDIR"

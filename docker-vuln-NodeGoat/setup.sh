@@ -14,3 +14,6 @@ cd NodeGoat
 
 # Constrói os containers
 docker-compose build
+
+# Up Container
+docker-compose up -d
