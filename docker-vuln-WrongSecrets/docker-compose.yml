@@ -1,0 +1,7 @@
+services:
+  wrongsecrets:
+    image: jeroenwillemsen/wrongsecrets:latest-no-vault
+    container_name: WrongSecrets
+    ports:
+      - "2000:8080"
+    restart: unless-stopped

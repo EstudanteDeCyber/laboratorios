@@ -135,5 +135,5 @@ EONET
 
 # --- Mensagem Final ---
 echo "Exibindo mensagem final..."
-bash msg_final.sh 10.10.10.10
+bash /tmp/scripts/msg_final.sh 10.10.10.10
 echo "Configurações concluídas !!!"

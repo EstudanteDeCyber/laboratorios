@@ -42,8 +42,19 @@ echo "Adicionando crontab para atualização do SSH..."
 echo "Iniciando o provisionamento e instalação do Docker..."
 bash docker_provision.sh
 
-# --- Download e UP dos Containers/Ferramentas ---
+# --- Download e Build dos Containers Vulneraveis - NODEGOAT ---
+cd /home/vagrant/lab-sec/scripts/docker-vuln-NodeGoat/
+chmod u+x *.sh
+bash setup.sh
+
+# --- Download e Build dos Containers Vulneraveis - SECURITYSHEPERD ---
+cd /home/vagrant/lab-sec/scripts/docker-vuln-Securityshepherd/
+chmod u+x *.sh
+bash setup.sh
+
+# --- Download e UP dos demais Containers Vulneraveis ---
 echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."
+cd /home/vagrant/lab-sec/scripts/
 bash up_all_containers_vuln.sh
 
 # --- Ajustar Teclado ---
