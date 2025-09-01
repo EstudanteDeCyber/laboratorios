@@ -17,7 +17,7 @@ docker compose \
   -f ../docker-vuln-webgoat/docker-compose.yml \
   -f ../docker-vuln-WrongSecrets/docker-compose.yml \
   -f ../docker-vuln-zap-webswing/docker-compose.yml \
-  -f ../docker-vuln-zap-NodeGoat/docker-compose.yml \
+  -f ../docker-vuln-NodeGoat/docker-compose.yml \
   -f ../docker-vuln-Securityshepherd/SecurityShepherd/docker-compose.yml \
   up -d
 
