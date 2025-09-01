@@ -52,7 +52,7 @@ chmod u+x setup.sh && bash setup.sh
 
 # HashiCorp Vault
 echo "Configurando HashiCorp Vault..."
-cd /home/vagrant/lab-sec/docker-hashicorp_vault/
+cd /home/vagrant/lab-sec/docker-tools-hashicorp_vault/
 chmod u+x setup.sh && sudo bash setup.sh
 sudo chmod 644 /var/services/vault/userconfig/tls/vault.key
 
@@ -63,7 +63,7 @@ bash up_all_containers_tools.sh
 
 # DefectDojo
 echo "Configurando DefectDojo..."
-cd /home/vagrant/lab-sec/docker-django-DefectDojo
+cd /home/vagrant/lab-sec/docker-tools-django-DefectDojo
 chmod u+x setup.sh && bash setup.sh
 
 # --- Ajustar Teclado ---

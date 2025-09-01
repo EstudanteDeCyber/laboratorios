@@ -12,7 +12,7 @@ docker compose \
   -f ../docker-tools-gophish/docker-compose.yml \
   -f ../docker-tools-inbucket/docker-compose.yml \
   -f ../docker-tools-openvas/docker-compose.yml \
-  -f ../docker-toos-splunk/docker-compose.yml \
+  -f ../docker-tools-splunk/docker-compose.yml \
   up -d
 
 echo "Processo de inicialização das ferramentas concluído. Verifique o status com 'docker ps'."
