@@ -1,6 +1,0 @@
-export const crapienv = {
-    IDENTITY_SERVICE: "identity/",
-    WORKSHOP_SERVICE: "workshop/",
-    COMMUNITY_SERVICE: "community/",
-};
-
