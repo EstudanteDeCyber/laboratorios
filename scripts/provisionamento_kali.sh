@@ -65,50 +65,18 @@ cat << 'VMS' > /root/redes.sh
 for ip in 20 30 40 50 101 102; do ping -c 1 -w 1 10.10.10."$ip" | grep ttl; done
 VMS
 mv /root/redes.sh /usr/bin/redes.sh && chmod 755 /usr/bin/redes.sh
-ln -s /usr/bin/redes.sh redes
+cd /home/vagrant & ln -s /usr/bin/redes.sh redes.sh
 
 # Lista de apps e portas Vulneraveis
-cat << 'APPS' > /home/vagrant/lista_de_apps
-##################################################################
-##   Aplicacoes Disponiveis abaixo. Divirta-se sem moderacao!!  ##
-##   Tire um pint e acesse-as pelo KALI                         ##
-##################################################################
-
-extremely_vulnerable_flask_app      https://10.0.2.15:5000- -> 80
-crapi-web                           https://10.0.2.15:8888- -> 80
-crapi-web                           https://10.0.2.15:8443- -> 443
-mailhog                             https://10.0.2.15:8025- -> 8025
-secshep_tomcat                      https://10.0.2.15:80- -> 8080
-secshep_tomcat                      https://10.0.2.15:443- -> 8443
-secshep_mariadb                     https://10.0.2.15:3306- -> 3306
-secshep_mongo                       https://10.0.2.15:27017- -> 27017
-nodegoat-web-1                      https://10.0.2.15:4000- -> 4000
-citizenstignowasp                   https://10.0.2.15:8081- -> 80
-citizenstignowasp                   https://10.0.2.15:3308- -> 3306
-WrongSecrets                        https://10.0.2.15:2000- -> 8080
-WebGoat                             https://10.0.2.15:9090- -> 9090
-WebGoat                             https://10.0.2.15:8084- -> 8080
-vulnlab                             https://10.0.2.15:1337- -> 80
-appsecco_dsvw                       https://10.0.2.15:8085- -> 8000
-badstore                            https://10.0.2.15:8083- -> 80
-hackazon                            https://10.0.2.15:8089- -> 80
-juice-shop                          https://10.0.2.15:3000- -> 30100
-bWAPP                               https://10.0.2.15:8082- -> 80
-bWAPP                               https://10.0.2.15:3309- -> 3306
-zap-webswing                        https://10.0.2.15:2222- -> 8080
-zap-webswing                        https://10.0.2.15:3333- -> 8990
-citizenstigdvwa                     https://10.0.2.15:8080- -> 80
-citizenstigdvwa                     https://10.0.2.15:3307- -> 3306
-mailhog                             (porta interna: 1025)
-crapi-workshop                      (sem portas expostas)
-crapi-community                     (porta interna: 6060)
-crapi-identity                      (porta interna: 10001)
-api.mypremiumdealership.com         (porta interna: 443)
-mongodb                             (porta interna: 27017)
-postgresdb                          (porta interna: 5432)
-nodegoat-mongo-1                    (porta interna: 27017)
-juice-shop                          (porta interna: 3000)
-APPS
+cat << TOOLS > lista_tools.sh
+ssh vagrant@10.10.10.101 "bash lab-sec/scripts/listar-container-portas.sh"
+TOOLS
+chown vagrant:vagrant && chmod u+x lista_tools.sh
+# Lista de apps e portas Vulneraveis
+cat << VULN> lista_vulb.sh
+ssh vagrant@10.10.10.102 "bash lab-sec/scripts/listar-container-portas.sh"
+VULN
+chown vagrant:vagrant && chmod u+x lista_vuln.sh
 
 # --- Ajustar Placa de Rede ---
 echo "Ajustando a configuração da rede..."
