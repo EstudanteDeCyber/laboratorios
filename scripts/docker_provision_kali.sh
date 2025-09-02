@@ -25,17 +25,17 @@ apt install -y htop unzip curl git ca-certificates apt-transport-https lsb-relea
 ## Adicionando a instalação e configuração do Chrony
 echo "Instalando e configurando Chrony para sincronizar com ntp.br..."
 # Parar o serviço padrão de sincronização de tempo para evitar conflito
-timedatectl set-ntp false
+sudo timedatectl set-ntp false
 # Remover o arquivo de configuração de exemplo
-rm -f /etc/chrony/chrony.conf
+sudo  -f /etc/chrony/chrony.conf
 # Instalar Chrony
-apt install -y chrony
+sudo apt install -y chrony
 # Adicionar a configuração para sincronizar com servidores ntp.br
-echo "server ntp.br iburst" | tee /etc/chrony/chrony.conf
+sudo echo "server ntp.br iburst" | tee /etc/chrony/chrony.conf
 # Reiniciar o serviço Chrony
-systemctl restart chrony
+sudo systemctl restart chrony
 # Habilitar o serviço Chrony
-systemctl enable chrony
+sudo systemctl enable chrony
 # Verificar o status da sincronização
 chronyc sources
 
@@ -43,21 +43,5 @@ chronyc sources
 sudo apt install -y docker.io
 sudo systemctl enable docker --now && sudo systemctl start docker --now
 sudo usermod -aG docker vagrant
-
-# Adicionar o repositório do Docker à lista de fontes do APT
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  tee /etc/apt/sources.list.d/docker.list > /dev/null
-curl -fsSL https://download.docker.com/linux/debian/gpg |
-  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-# Instalar Docker Engine, CLI, Containerd e Docker Compose
-echo "Executando a instalação do Docker Engine e Docker Compose..."
-apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
-
-## Aguardar o Docker subir
-echo "Aguardando o serviço Docker ficar pronto..."
-sleep 10
 
 echo "Instalação do Docker concluída!"

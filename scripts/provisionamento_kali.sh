@@ -4,6 +4,7 @@
 # Nao atualiza ssh e ajusta para atualizacao sem iteracao
 sudo apt update && apt-mark hold openssh-server
 NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" update
+sudo apt install -y git
 
 # Diretório para scripts
 echo "Criando diretório para scripts..."
@@ -19,6 +20,7 @@ SCRIPTS_TO_DOWNLOAD=(
   "ssh_user_config.sh"
   "msg_final.sh"
   "crontab_ssh.sh"
+  "docker_provision_kali.sh"
 )
 
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
@@ -35,12 +37,8 @@ echo "Executando scripts de provisionamento..."
 # Executa os scripts um a um. A ordem é importante.
 sudo ./ssh_user_config.sh
 sudo ./ajuste_teclado.sh
-sudo ./rontab_ssh.sh
-
-# Clonando repos Git
-cd /home/vagrant
-git clone https://github.com/brunobotelhobr/My-Tools.git
-cd My-Tools && git clone https://github.com/brunobotelhobr/My-IP-Calculator.git
+sudo ./crontab_ssh.sh
+sudo ./docker_provision_kali.sh
 
 # Lista de vms deployadas com o Vagrant
 cat << 'VMS' > /root/redes.sh
