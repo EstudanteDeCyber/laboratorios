@@ -28,4 +28,4 @@ sed -i '/image:/a \    restart: unless-stopped\n    container_name: mongodb-node
 docker compose build
 
 # Up Container
-#docker compose up -d
+docker compose up -d
