@@ -16,7 +16,7 @@ echo "Instalando e configurando Chrony para sincronizar com ntp.br..."
 # Parar o serviço padrão de sincronização de tempo para evitar conflito
 sudo timedatectl set-ntp false
 # Remover o arquivo de configuração de exemplo
-sudo  -f /etc/chrony/chrony.conf
+sudo rm -f /etc/chrony/chrony.conf
 # Instalar Chrony
 sudo apt install -y chrony
 # Adicionar a configuração para sincronizar com servidores ntp.br
