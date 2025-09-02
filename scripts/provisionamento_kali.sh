@@ -117,6 +117,7 @@ sudo git clone https://github.com/brunobotelhobr/My-Tools.git
 cd My-Tools && sudo it clone https://github.com/brunobotelhobr/My-IP-Calculator.git
 
 #cloudgoat
+NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" update
 sudo apt-get install docker.io
 sudo systemctl enable docker && sudo systemctl start docker
 sudo usermod -aG sudo vagrant
