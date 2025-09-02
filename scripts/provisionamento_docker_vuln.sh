@@ -90,4 +90,4 @@ bash listar-container-portas.sh
 echo "Exibindo mensagem final..."
 bash msg_final.sh 10.10.10.102
 
-echo "Provisionamento do nó concluído!"
+echo "Provisionamento do no concluido!"
