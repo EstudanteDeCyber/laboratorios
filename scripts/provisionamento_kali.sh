@@ -5,6 +5,7 @@
 sudo apt update && apt-mark hold openssh-server
 NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" update
 sudo apt install -y git
+sudo apt upgrade -y
 
 # Diretório para scripts
 echo "Criando diretório para scripts..."
@@ -117,12 +118,10 @@ EONET
 # Clonando repos Git
 cd /home/vagrant
 sudo git clone https://github.com/brunobotelhobr/My-Tools.git
-cd My-Tools && sudo it clone https://github.com/brunobotelhobr/My-IP-Calculator.git
+cd My-Tools && sudo git clone https://github.com/brunobotelhobr/My-IP-Calculator.git
 
 #cloudgoat
-sudo apt-get install docker.io
-sudo systemctl enable docker && sudo systemctl start docker
-sudo usermod -aG sudo vagrant
+cd /home/vagrant/
 sudo docker pull rhinosecuritylabs/cloudgoat:latest
 
 cat << 'CLOUDGOAT' > /home/vagrant/readme_cloudgoat
@@ -133,8 +132,19 @@ cloudgoat list
 CLOUDGOAT
 
 #vulnLabs
-
 sudo git clone --depth 1 https://github.com/vulhub/vulhub
+
+# Cloudfoxable 
+git clone https://github.com/BishopFox/cloudfoxable.git
+cd cloudfoxable
+sudo docker build --no-cache -t cloudfoxable .
+
+cat << 'CLOUDFOXABLE' > /home/vagrant/readme_cloudgoat
+# Rodar o container (Voce ja cairá dentro dele)
+sudo docker run -it -v cloudfoxable
+# Exemplo de como listar os laboratórios disponíveis
+cloudgoat list
+CLOUDFOXABLE
 
 sudo chown vagrant:vagrant /home/vagrant/*
 
