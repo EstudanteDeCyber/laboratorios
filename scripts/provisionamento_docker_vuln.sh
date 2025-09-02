@@ -40,7 +40,7 @@ sudo ./crontab_ssh.sh
 # --- Instalação do Docker ---
 echo "Iniciando o provisionamento e instalação do Docker..."
 bash docker_provision.sh
-pt install docker-compose
+sudo apt install docker-compose
 
 # --- Download e UP dos Containers Vulneraveis prontos ---
 echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."

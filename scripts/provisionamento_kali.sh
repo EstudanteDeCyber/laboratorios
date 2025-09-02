@@ -1,8 +1,11 @@
 #!/bin/bash
-
 # Este script automatiza o provisionamento de um ambiente Kali Linux.
 
-# Diretório para scripts temporários
+# Nao atualiza ssh e ajusta para atualizacao sem iteracao
+sudo apt update && apt-mark hold openssh-server
+NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" update
+
+# Diretório para scripts
 echo "Criando diretório para scripts..."
 mkdir -p /tmp/scripts
 cd /tmp/scripts
@@ -15,6 +18,7 @@ SCRIPTS_TO_DOWNLOAD=(
   "ajuste_teclado.sh"
   "ssh_user_config.sh"
   "msg_final.sh"
+  "crontab_ssh.sh"
 )
 
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
@@ -31,6 +35,7 @@ echo "Executando scripts de provisionamento..."
 # Executa os scripts um a um. A ordem é importante.
 sudo ./ssh_user_config.sh
 sudo ./ajuste_teclado.sh
+sudo ./rontab_ssh.sh
 
 # Clonando repos Git
 cd /home/vagrant
@@ -117,7 +122,6 @@ sudo git clone https://github.com/brunobotelhobr/My-Tools.git
 cd My-Tools && sudo it clone https://github.com/brunobotelhobr/My-IP-Calculator.git
 
 #cloudgoat
-NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" update
 sudo apt-get install docker.io
 sudo systemctl enable docker && sudo systemctl start docker
 sudo usermod -aG sudo vagrant
