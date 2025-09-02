@@ -3,13 +3,14 @@
 
 # Nao atualiza ssh e ajusta para atualizacao sem iteracao
 export DEBIAN_FRONTEND=noninteractive
-#apt-mark hold openssh-server responder
+sudo apt update
+#apt-mark hold openssh-server
 #NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --fix-broken install -y || true
-apt-get --fix-broken install -y || true
-dpkg --configure -a || true
-apt-get install -f -y || true
-apt-get upgrade -y || true
+#DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --fix-broken install -y || true
+sudo apt-get --fix-broken install -y || true
+sudo dpkg --configure -a || true
+sudo apt-get install -f -y || true
+sudo apt-get upgrade -y || true
 sudo apt autoremove -y
 echo
 echo
