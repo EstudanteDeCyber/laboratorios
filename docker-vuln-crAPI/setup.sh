@@ -26,7 +26,7 @@ sed -i '/image:/a \    restart: unless-stopped' docker-compose.yml
 docker compose pull
 
 # Sobe os containers em segundo plano com compatibilidade
-#docker compose -f docker-compose.yml --compatibility up -d
+docker compose -f docker-compose.yml --compatibility up -d
 
 # Garante que o serviço escute em todas as interfaces
-#LISTEN_IP="0.0.0.0" docker compose -f docker-compose.yml --compatibility up -d
+LISTEN_IP="0.0.0.0" docker compose -f docker-compose.yml --compatibility up -d
