@@ -45,7 +45,7 @@ mv /root/redes.sh /usr/bin/redes.sh && chmod 755 /usr/bin/redes.sh
 ln -s /usr/bin/redes.sh redes
 
 # Lista de apps e portas Vulneraveis
-cat << 'EONET' > /home/vagrant/lista_de_apps
+cat << 'APPS' > /home/vagrant/lista_de_apps
 ##################################################################
 ##   Aplicacoes Disponiveis abaixo. Divirta-se sem moderacao!!  ##
 ##   Tire um pint e acesse-as pelo KALI                         ##
@@ -85,7 +85,7 @@ mongodb                             (porta interna: 27017)
 postgresdb                          (porta interna: 5432)
 nodegoat-mongo-1                    (porta interna: 27017)
 juice-shop                          (porta interna: 3000)
-EONET
+APPS
 
 # Ajustar a permissao para a lista de apps
 chmod 755 /home/vagrant/lista_apps
@@ -110,6 +110,30 @@ iface eth2 inet static
 address 192.168.56.10
 netmask 255.255.255.0
 EONET
+
+# Clonando repos Git
+cd /home/vagrant
+sudo git clone https://github.com/brunobotelhobr/My-Tools.git
+cd My-Tools && sudo it clone https://github.com/brunobotelhobr/My-IP-Calculator.git
+
+#cloudgoat
+sudo apt-get install docker.io
+sudo systemctl enable docker && sudo systemctl start docker
+sudo usermod -aG sudo vagrant
+sudo docker pull rhinosecuritylabs/cloudgoat:latest
+
+cat << 'CLOUDGOAT' > /home/vagrant/readme_cloudgoat
+# Rodar o container (Voce ja cairá dentro dele)
+sudo docker run -it rhinosecuritylabs/cloudgoat:latest
+# Exemplo de como listar os laboratórios disponíveis
+cloudgoat list
+CLOUDGOAT
+
+#vulnLabs
+
+sudo git clone --depth 1 https://github.com/vulhub/vulhub
+
+sudo chown vagrant:vagrant /home/vagrant/*
 
 # --- Mensagem Final ---
 echo "Exibindo mensagem final..."
