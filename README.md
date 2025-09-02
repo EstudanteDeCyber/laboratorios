@@ -1,5 +1,6 @@
 # lab-sec
 Laboratorios para estudos de CyberSecurity.
+
 Este projeto nasce da vontade de estudar cibersegurança e automação, tudo ao mesmo tempo :)
 
 # Vms's disponpiveis:
@@ -74,5 +75,7 @@ Este projeto nasce da vontade de estudar cibersegurança e automação, tudo ao 
 #### https://github.com/BishopFox/cloudfoxable
 
 # Tools Disponíveis
+...
 
-# Estudo sem moderacao !!!
+
+# Estude sem moderacao !!!
