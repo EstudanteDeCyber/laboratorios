@@ -67,6 +67,16 @@ cd /home/vagrant/lab-sec/docker-vuln-Flask_App/
 chmod u+x *.sh
 sudo ./setup.sh
 
+# --- Download e Build dos Containers Vulneraveis - FLASKAPP2---
+cd /home/vagrant/lab-sec/docker-vuln-flask2/
+chmod u+x *.sh
+sudo ./setup.sh
+
+# --- Download e Build dos Containers Vulneraveis - PiXi---
+cd /home/vagrant/lab-sec/docker-vuln-Pixi/
+chmod u+x *.sh
+sudo ./setup.sh
+
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
 cd /home/vagrant/lab-sec/scripts

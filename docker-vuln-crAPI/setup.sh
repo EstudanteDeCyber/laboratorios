@@ -19,6 +19,34 @@ fi
 # Entra no diretório de deployment do Docker
 cd crAPI-main/deploy/docker
 
+# 1) Adicionar restart e container_name em "crapi-identity"
+sed -i '/crapi-identity:/a \    restart: unless-stopped' docker-compose.yml
+
+# 2) Adicionar restart e container_name em "crapi-community"
+sed -i '/crapi-community:/a \    restart: unless-stopped' docker-compose.yml
+
+# 3) Adicionar restart e container_name em "crapi-workshop"
+sed -i '/crapi-workshop:/a \    restart: unless-stopped' docker-compose.yml
+
+# 4) Adicionar restart e container_name em "crapi-web"
+sed -i '/crapi-web:/a \    restart: unless-stopped' docker-compose.yml
+
+# 5) Adicionar restart e container_name em "postgresdb"
+sed -i '/postgresdb:/a \    restart: unless-stopped\n    container_name: crapi-postgresdb' docker-compose.yml
+
+# 6) Adicionar restart e container_name em "mongo"
+sed -i '/mongo:/a \    restart: unless-stopped\n    container_name: crapi-mongodb' docker-compose.yml
+
+# 7) Adicionar restart e container_name em "mailhog"
+sed -i '/mailhog:/a \    restart: unless-stopped' docker-compose.yml
+
+# 8) Adicionar restart e container_name em "api.mypremiumdealership.com"
+sed -i '/api\.mypremiumdealership\.com:/a \    restart: unless-stopped' docker-compose.yml
+
+sed -i '213d' docker-compose.yml
+
+sed -i '237' docker-compose.yml
+
 # Baixa as imagens necessárias
 docker compose pull
 

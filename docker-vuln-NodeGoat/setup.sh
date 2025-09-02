@@ -12,8 +12,20 @@ fi
 # Entra no diretório do projeto
 cd NodeGoat
 
+# 1) Remover a linha 1 (version)
+sed -i '1d' docker-compose.yml
+
+# 2) Remover a linha 2 (linha em branco)
+sed -i '1d' docker-compose.yml
+
+# 3) Adicionar restart e container_name em "web"
+sed -i '/web:/a \    restart: unless-stopped\n    container_name: nodegoat-app' docker-compose.yml
+
+# 4) Adicionar restart e container_name em "mongo"
+sed -i '/mongo:/a \    restart: unless-stopped\n    container_name: mongodb-nodegoat' docker-compose.yml
+
 # Constrói os containers
-docker-compose build
+docker compose build
 
 # Up Container
 docker compose up -d
