@@ -2,19 +2,27 @@
 # Este script automatiza o provisionamento de um ambiente Kali Linux.
 
 # Nao atualiza ssh e ajusta para atualizacao sem iteracao
-sudo apt update && apt-mark hold openssh-server
-NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" update
+export DEBIAN_FRONTEND=noninteractive
+#apt-mark hold openssh-server responder
+#NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --fix-broken install -y || true
+apt-get upgrade -y || true
+apt-get --fix-broken install -y || true
+dpkg --configure -a || true
+apt-get install -f -y || true
 sudo apt install -y git
-sudo apt upgrade -y
-
+sudo apt autoremove -y
+echo
+echo
 # Diretório para scripts
 echo "Criando diretório para scripts..."
 mkdir -p /tmp/scripts
 cd /tmp/scripts
-
+echo
+echo
 # --- Download dos Scripts do GitHub ---
 echo "Baixando scripts do GitHub..."
-
+echo
 # Usando um loop para baixar os arquivos de forma mais eficiente
 SCRIPTS_TO_DOWNLOAD=(
   "ajuste_teclado.sh"
@@ -27,18 +35,23 @@ SCRIPTS_TO_DOWNLOAD=(
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
   wget -O "$script" "https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/$script"
 done
-
+echo
 # Dar permissão de execução
 echo "Concedendo permissões de execução..."
 chmod u+x *.sh
-
+echo
 # --- Execução dos Scripts Baixados ---
 echo "Executando scripts de provisionamento..."
 
 # Executa os scripts um a um. A ordem é importante.
+
+echo "Rodando script de ajustes de SSH e USUÁRIOS..."
 sudo ./ssh_user_config.sh
-sudo ./ajuste_teclado.sh
+echo "Rodando script de Ajuste de Teclado..."
+#sudo ./ajuste_teclado.sh
+echo "Rodando script de Ajuste de Contrab..."
 sudo ./crontab_ssh.sh
+echo "Rodando script de Instalaxao do docker..."
 sudo ./docker_provision_kali.sh
 
 # Lista de vms deployadas com o Vagrant

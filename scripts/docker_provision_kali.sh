@@ -5,22 +5,11 @@
 
 ## Ajuste do fuso horário
 echo "Ajustando fuso horário..."
-timedatectl set-timezone America/Sao_Paulo
-
-## Update da máquina virtual
-echo "Atualizando o sistema..."
-apt update && apt-mark hold openssh-server
-NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" upgrade
-
-## Verificando e removendo instalações antigas do Docker
-echo "Verificando e removendo instalações antigas do Docker, caso existam..."
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
-  apt-get remove -y $pkg || true
-done
+sudo timedatectl set-timezone America/Sao_Paulo
 
 ## Instalar PRÉ-REQUISITOS
 echo "Instalando pacotes pré-requisitos..."
-apt install -y htop unzip curl git ca-certificates apt-transport-https lsb-release gnupg jq
+sudo apt install -y htop unzip curl ca-certificates apt-transport-https lsb-release gnupg jq
 
 ## Adicionando a instalação e configuração do Chrony
 echo "Instalando e configurando Chrony para sincronizar com ntp.br..."
@@ -40,8 +29,7 @@ sudo systemctl enable chrony
 chronyc sources
 
 ## Instalação do Docker seguindo o procedimento oficial do Kali
+echo "Instalando o Docker"
 sudo apt install -y docker.io
 sudo systemctl enable docker --now && sudo systemctl start docker --now
 sudo usermod -aG docker vagrant
-
-echo "Instalação do Docker concluída!"

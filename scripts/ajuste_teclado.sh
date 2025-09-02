@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Ajuste de Teclado - Layout brasileiro (ABNT2) sem interação
+echo "Ajustando de Teclado - Layout brasileiro (ABNT2)"
 
 set -e  # Encerra o script em caso de erro
 
