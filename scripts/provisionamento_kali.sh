@@ -1,9 +1,11 @@
 #!/bin/bash
 # Este script automatiza o provisionamento de um ambiente Kali Linux.
 
+echo "Atualizando o Sistema"
 # Nao atualiza ssh e ajusta para atualizacao sem iteracao
 export DEBIAN_FRONTEND=noninteractive
 sudo apt update
+# Nao atualiza ssh e ajusta para atualizacao sem iteracao
 #apt-mark hold openssh-server
 #NEEDRESTART_MODE=a apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" upgrade
 #DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --fix-broken install -y || true
@@ -13,13 +15,13 @@ sudo apt-get install -f -y || true
 sudo apt-get upgrade -y || true
 sudo apt autoremove -y
 echo
-echo
+
 # Diretório para scripts
 echo "Criando diretório para scripts..."
 mkdir -p /tmp/scripts
 cd /tmp/scripts
 echo
-echo
+
 # --- Download dos Scripts do GitHub ---
 echo "Baixando scripts do GitHub..."
 echo
@@ -36,23 +38,27 @@ for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
   wget -O "$script" "https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/$script"
 done
 echo
+
 # Dar permissão de execução
 echo "Concedendo permissões de execução..."
 chmod u+x *.sh
 echo
+
 # --- Execução dos Scripts Baixados ---
 echo "Executando scripts de provisionamento..."
-
-# Executa os scripts um a um. A ordem é importante.
-
+echo
 echo "Rodando script de ajustes de SSH e USUÁRIOS..."
 sudo ./ssh_user_config.sh
+echo
 echo "Rodando script de Ajuste de Teclado..."
 #sudo ./ajuste_teclado.sh
+echo
 echo "Rodando script de Ajuste de Contrab..."
 sudo ./crontab_ssh.sh
+echo
 echo "Rodando script de Instalaxao do docker..."
 sudo ./docker_provision_kali.sh
+echo
 
 # Lista de vms deployadas com o Vagrant
 cat << 'VMS' > /root/redes.sh
@@ -104,9 +110,6 @@ nodegoat-mongo-1                    (porta interna: 27017)
 juice-shop                          (porta interna: 3000)
 APPS
 
-# Ajustar a permissao para a lista de apps
-chmod 755 /home/vagrant/lista_apps
-
 # --- Ajustar Placa de Rede ---
 echo "Ajustando a configuração da rede..."
 cp /etc/network/interfaces /etc/network/interfaces.bak || true
@@ -127,6 +130,8 @@ iface eth2 inet static
 address 192.168.56.10
 netmask 255.255.255.0
 EONET
+
+echo "Clonando repositorios"
 
 # Clonando repos Git
 cd /home/vagrant
@@ -162,6 +167,5 @@ CLOUDFOXABLE
 sudo chown vagrant:vagrant /home/vagrant/*
 
 # --- Mensagem Final ---
-echo "Exibindo mensagem final..."
 bash /tmp/scripts/msg_final.sh 10.10.10.10
 echo "Configurações concluídas !!!"
