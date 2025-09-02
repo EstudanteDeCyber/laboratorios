@@ -4,11 +4,11 @@
 Vagrant.configure("2") do |config|
 
 #####################################################################
-##						
-## Para rodar capturando os outputs:			
-##								
-## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append  
-##								
+##																   ##
+## Para rodar capturando os outputs:							   ##
+##																   ##
+## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append  ##
+##																   ##
 #####################################################################
 
   config.vm.synced_folder '.', '/vagrant', disabled: true

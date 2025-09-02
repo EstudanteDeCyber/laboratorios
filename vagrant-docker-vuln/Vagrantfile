@@ -1,21 +1,21 @@
-i# -*- mode: ruby -*-
+# -*- mode: ruby -*-
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
 
-####################################################################
-##								
-## Para rodar capturando os outputs:			
-##						
-## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append
-##								
-####################################################################
+#####################################################################
+##																   ##
+## Para rodar capturando os outputs:							   ##
+##																   ##
+## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append  ##
+##																   ##
+#####################################################################
 
   config.vm.synced_folder '.', '/vagrant', disabled: true
   config.vm.boot_timeout = 900
 
 # ===================================================================
-#  VM Docker TOOLS - 10.10.10.100
+#  VM Docker TOOLS - 10.10.10.102
 # ===================================================================
   config.vm.define "Docker-Vuln" do |node|
     node.vm.box = "debian/bookworm64"
@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     
 	# Baixa o script de provisionamento principal do GitHub
-    wget -O /tmp/provisionamento_node.sh https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/provisionamento_docker_vuln.sh
+    wget -O /tmp/provisionamento_docker_vuln.sh https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/provisionamento_docker_vuln.sh
     chmod +x /tmp/provisionamento_docker_vuln.sh
     
     # Executa o script

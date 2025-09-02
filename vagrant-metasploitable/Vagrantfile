@@ -1,0 +1,119 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+#####################################################################
+##																   ##
+## Para rodar capturando os outputs:							   ##
+##																   ##
+## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append  ##
+##																   ##
+#####################################################################
+
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.boot_timeout = 900
+# ===================================================================
+#  metasploitable2 LINUX  - 10.10.10.20
+#  https://github.com/deargle/lab-metasploitable2
+# ===================================================================
+
+  config.vm.define "Meta2" do |meta2|
+    meta2.vm.box = "mattglass/metasploitable2-PS"
+	meta2.vm.hostname = "metasploitable2"
+	
+    meta2.vm.provider "virtualbox" do |vb|
+	  vb.name = "Metasploitable2"
+      vb.memory = "512"
+	  vb.cpus = "1"
+    end
+	
+    meta2.vm.provision "shell", inline: <<-SHELL
+     # Ajustar Placa de REDE para o IP específico
+      cp /etc/network/interfaces /etc/network/interfaces.bak || true
+      cat << 'EONET' > /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+address 10.10.10.20
+netmask 255.255.255.0
+EONET
+	
+    SHELL
+  end
+  
+# ===================================================================
+#  metasploitable3 LINUX - 10.10.10.30
+#  https://github.com/rapid7/metasploitable3
+# ===================================================================
+
+  config.vm.define "Meta3" do |meta3|
+    meta3.vm.box = "rapid7/metasploitable3-ub1404"
+    meta3.vm.hostname = "metasploitable3"
+	meta3.ssh.username = 'vagrant'
+    meta3.ssh.password = 'vagrant'
+
+    meta3.vm.provider "virtualbox" do |vb|
+      vb.name = "Metasploitable3"
+      vb.memory = 2048
+	  vb.cpus = "1"	  
+    end
+	
+    meta3.vm.provision "shell", inline: <<-SHELL
+     # Ajustar Placa de REDE para o IP específico
+      cp /etc/network/interfaces /etc/network/interfaces.bak || true
+      cat << 'EONET' > /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+address 10.10.10.30
+netmask 255.255.255.0
+EONET
+    SHELL
+  end
+
+# ===================================================================
+#  metasploitable3 WINDOWS 10.10.10.40
+#  https://github.com/rapid7/metasploitable3
+# =================================================================== 
+  config.vm.define "Meta3-W2k8" do |win2k8|
+    # Base configuration for the VM and provisioner
+    win2k8.vm.box = "rapid7/metasploitable3-win2k8"
+    win2k8.vm.hostname = "metasploitable3-W2k8"
+    win2k8.vm.communicator = "winrm"
+    win2k8.winrm.retry_limit = 60
+    win2k8.winrm.retry_delay = 10
+    win2k8.vm.network "private_network", ip: "10.10.10.40" , netmask: "255.255.255.0" , virtualbox__intnet: "EngRev_Malware_VulnLab"
+
+    win2k8.vm.provider "virtualbox" do |vb|
+	  vb.name = "Metasploitable3-W2k8"
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+
+    # Configure Firewall to open up vulnerable services
+    case ENV['MS3_DIFFICULTY']
+      when 'easy'
+    win2k8.vm.provision :shell, inline: "C:\\startup\\disable_firewall.bat"
+      else
+#    win2k8.vm.provision :shell, inline: "C:\\startup\\enable_firewall.bat"
+#    win2k8.vm.provision :shell, inline: "C:\\startup\\configure_firewall.bat"
+	end
+
+    # Insecure share from the Linux machine
+    win2k8.vm.provision :shell, inline: "C:\\startup\\install_share_autorun.bat"
+    win2k8.vm.provision :shell, inline: "C:\\startup\\setup_linux_share.bat"
+    win2k8.vm.provision :shell, inline: "rm C:\\startup\\*" # Cleanup startup scripts
+	
+	# Shutdown the VM after provisioning
+    
+    win2k8.vm.provision "shell", inline: <<-POWERSHELL
+    netsh advfirewall firewall add rule name="Allow ICMPv4-In" protocol=1 dir=in action=allow enable=yes profile=any
+    netsh advfirewall firewall add rule name="Allow ICMPv4-Out" protocol=1 dir=out action=allow enable=yes profile=any
+  POWERSHELL
+  end
+end
