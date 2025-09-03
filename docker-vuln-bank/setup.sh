@@ -9,6 +9,7 @@ cd vuln-bank
 #1) Deleção das linhas 1 e 2
 sed -i '1d' docker-compose.yml
 sed -i '1d' docker-compose.yml
+sed -i '8d' docker-compose.yml
 
 # 2) Ajustes de portas
 sed -i 's/5000:5000/5005:5005/g' docker-compose.yml

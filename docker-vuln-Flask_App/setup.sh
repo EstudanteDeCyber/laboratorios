@@ -47,4 +47,4 @@ if docker ps -a --format '{{.Names}}' | grep -Eq "^extremely_vulnerable_flask_ap
 fi
 
 # Roda o container
-docker run -d --restart unless-stopped -p 5001:80 --name extremely_vulnerable_flask_app extremely_vulnerable_flask_app
+docker run -d --restart unless-stopped -p 5000:80 --name extremely_vulnerable_flask_app extremely_vulnerable_flask_app
