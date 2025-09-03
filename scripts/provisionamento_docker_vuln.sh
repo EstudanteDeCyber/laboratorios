@@ -47,37 +47,37 @@ echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráve
 cd /home/vagrant/lab-sec/scripts/
 bash up_all_containers_vuln.sh
 
-# --- Download e Build dos Containers Vulneraveis - NODEGOAT ---
+# --- Download e Build dos Containers Vulneraveis - NODEGOAT PORTA 4000 ---
 cd /home/vagrant/lab-sec/docker-vuln-NodeGoat/
 chmod u+x *.sh
 sudo ./setup.sh
 
-# --- Download e Build dos Containers Vulneraveis - SECURITYSHEPERD ---
+# --- Download e Build dos Containers Vulneraveis - SECURITYSHEPERD PORTAS 80 e 443 ---
 cd /home/vagrant/lab-sec/docker-vuln-Securityshepherd/
 chmod u+x *.sh
 sudo ./setup.sh
 
-# --- Download e Build dos Containers Vulneraveis - crAPI---
+# --- Download e Build dos Containers Vulneraveis - crAPI PORTAS PORTAS 8443 e 8888 ---
 cd /home/vagrant/lab-sec/docker-vuln-crAPI/
 chmod u+x *.sh
 sudo ./setup.sh
 
-# --- Download e Build dos Containers Vulneraveis - FLASKAPP---
+# --- Download e Build dos Containers Vulneraveis - FLASKAPP PORTA 5050 ---
 cd /home/vagrant/lab-sec/docker-vuln-Flask_App/
 chmod u+x *.sh
 sudo ./setup.sh
 
-# --- Download e Build dos Containers Vulneraveis - FLASKAPP2---
+# --- Download e Build dos Containers Vulneraveis - FLASKAPP2 PORTA 5000 ---
 cd /home/vagrant/lab-sec/docker-vuln-flask2/
 chmod u+x *.sh
 sudo ./setup.sh
 
-# --- Download e Build dos Containers Vulneraveis - PiXi---
+# --- Download e Build dos Containers Vulneraveis - PiXi PORTA 8000 ---
 cd /home/vagrant/lab-sec/docker-vuln-Pixi/
 chmod u+x *.sh
 sudo ./setup.sh
 
- --- Download e Build dos Containers Vulneraveis - BANK---
+# --- Download e Build dos Containers Vulneraveis - BANK PORTA 5005 ---
 cd /home/vagrant/lab-sec/docker-vuln-bank/
 chmod u+x *.sh
 sudo ./setup.sh
