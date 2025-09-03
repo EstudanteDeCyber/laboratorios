@@ -1,8 +1,8 @@
 #!/bin/bash
 echo
 echo "##################################################################"
-echo "##   Aplicacoes Disponiveis abaixo. Divirta-se sem moderacao!!  ##"
-echo "##   Tire um pint e acesse-as pelo KALI                         ##"
+echo "##   Aplicações Disponíveis abaixo. Divirta-se sem moderação!!  ##"
+echo "##   Tire um print e acesse-as pelo KALI                      ##"
 echo "##################################################################"
 echo
 
@@ -12,53 +12,55 @@ if [[ -z "$ip" ]]; then
     echo "Erro: Não foi possível obter o IP da máquina."
     exit 1
 fi
-base_url="https://$ip"
+base_url="http://$ip"
 
-# Primeira passagem: exibir apenas portas mapeadas (https)
-docker ps --format '{{.Names}} {{.Ports}}' | while IFS= read -r line; do
-    name=$(echo "$line" | awk '{print $1}')
-    ports=$(echo "$line" | cut -d' ' -f2-)
-    if [[ -z "$ports" ]]; then
-        continue
-    fi
-    declare -A shown=()
-    IFS=',' read -ra port_array <<< "$ports"
-    for port in "${port_array[@]}"; do
-        port=$(echo "$port" | xargs)
-        if [[ "$port" == *"->"* ]]; then
-            host_mapping=$(echo "$port" | cut -d'>' -f1)
-            container_mapping=$(echo "$port" | cut -d'>' -f2)
-            host_port=$(echo "$host_mapping" | awk -F':' '{print $NF}')
-            container_port=$(echo "$container_mapping" | awk -F'/' '{print $1}')
-            key="$host_port->$container_port"
-            if [[ -z "${shown[$key]}" ]]; then
-                printf "%-35s %s\n" "$name" "$base_url:$host_port -> $container_port"
-                shown[$key]=1
-            fi
-        fi
-    done
-    unset shown
-done
+# Usar AWK para processar a saída de forma robusta e universal
+docker ps --format '{{.Names}}\t{{.Ports}}' | awk -v base_url="$base_url" '
+{
+    name = $1;
+    # A partir do 2o campo até o final, a string de portas
+    ports_string = $0;
+    sub(/^[^[:space:]]+[[:space:]]+/, "", ports_string);
 
-# Segunda passagem: exibir portas internas ou sem portas expostas
-docker ps --format '{{.Names}} {{.Ports}}' | while IFS= read -r line; do
-    name=$(echo "$line" | awk '{print $1}')
-    ports=$(echo "$line" | cut -d' ' -f2-)
-    declare -A shown=()
-    if [[ -z "$ports" ]]; then
-        printf "%-35s %s\n" "$name" "(sem portas expostas)"
-        continue
-    fi
-    IFS=',' read -ra port_array <<< "$ports"
-    for port in "${port_array[@]}"; do
-        port=$(echo "$port" | xargs)
-        if [[ "$port" != *"->"* ]]; then
-            internal_port=$(echo "$port" | awk -F'/' '{print $1}')
-            if [[ -z "${shown[$internal_port]}" ]]; then
-                printf "%-35s %s\n" "$name" "(porta interna: $internal_port)"
-                shown[$internal_port]=1
-            fi
-        fi
-    done
-    unset shown
+    if (ports_string == "") {
+        print "999999", name, "(sem portas expostas)";
+        next;
+    }
+
+    # Separar as portas por vírgula
+    split(ports_string, ports_array, ",");
+
+    for (i in ports_array) {
+        port = ports_array[i];
+
+        # Remover espaços em branco
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", port);
+
+        # Padrão para portas mapeadas (ex: 0.0.0.0:8080->8080/tcp)
+        if (port ~ /->/) {
+            split(port, parts, ":");
+            sub(/\/tcp$/, "", parts[2]);
+            split(parts[2], ports, "->");
+
+            host_port = ports[1];
+            container_port = ports[2];
+
+            if (host_port != "" && container_port != "") {
+                print host_port, name, base_url ":" host_port " -> " container_port;
+            }
+
+        # Padrão para portas internas (ex: 8080/tcp)
+        } else if (port ~ /^[[:digit:]]+\/tcp/) {
+            sub(/\/tcp$/, "", port);
+            internal_port = port;
+            if (internal_port != "") {
+                print "999998", name, "(porta interna: " internal_port ")";
+            }
+        }
+    }
+}
+' | sort -n | uniq | while IFS= read -r line; do
+    container_name=$(echo "$line" | awk '{print $2}')
+    details=$(echo "$line" | awk '{$1=$2=""; print $0}' | sed 's/^[[:space:]]*//')
+    printf "%-35s %s\n" "$container_name" "$details"
 done
