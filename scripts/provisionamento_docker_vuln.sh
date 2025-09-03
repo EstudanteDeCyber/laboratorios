@@ -77,6 +77,11 @@ cd /home/vagrant/lab-sec/docker-vuln-Pixi/
 chmod u+x *.sh
 sudo ./setup.sh
 
+ --- Download e Build dos Containers Vulneraveis - BANK---
+cd /home/vagrant/lab-sec/docker-vuln-bank/
+chmod u+x *.sh
+sudo ./setup.sh
+
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
 cd /home/vagrant/lab-sec/scripts

@@ -65,18 +65,21 @@ cat << 'VMS' > /root/redes.sh
 for ip in 20 30 40 50 101 102; do ping -c 1 -w 1 10.10.10."$ip" | grep ttl; done
 VMS
 mv /root/redes.sh /usr/bin/redes.sh && chmod 755 /usr/bin/redes.sh
-cd /home/vagrant & ln -s /usr/bin/redes.sh redes.sh
+cd /home/vagrant 
+ln -s /usr/bin/redes.sh redes.sh
 
 # Lista de apps e portas Vulneraveis
-cat << TOOLS > lista_tools.sh
-ssh vagrant@10.10.10.101 "bash lab-sec/scripts/listar-container-portas.sh"
+cat << TOOLS > /home/vagrant/lista_tools.sh
+sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.101 "bash lab-sec/scripts/listar-container-portas.sh"
 TOOLS
-chown vagrant:vagrant && chmod u+x lista_tools.sh
+chown vagrant:vagrant lista_tools.sh && chmod u+x lista_tools.sh
+sudo apt install -y sshpass
+
 # Lista de apps e portas Vulneraveis
-cat << VULN> lista_vulb.sh
-ssh vagrant@10.10.10.102 "bash lab-sec/scripts/listar-container-portas.sh"
+cat << VULN > /home/vagrant/lista_vuln.sh
+sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.102 "bash lab-sec/scripts/listar-container-portas.sh"
 VULN
-chown vagrant:vagrant && chmod u+x lista_vuln.sh
+chown vagrant:vagrant lista_vuln.sh && chmod u+x lista_vuln.sh
 
 # --- Ajustar Placa de Rede ---
 echo "Ajustando a configuração da rede..."
