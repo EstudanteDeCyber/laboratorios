@@ -17,3 +17,4 @@ docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli --user "$USERNAME" --
 
 echo "[✓] Usuário criado com sucesso."
 echo "[→] Usuário: $USERNAME"
+echo "[→] Usuário: $PASSWORD"

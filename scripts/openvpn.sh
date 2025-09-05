@@ -35,15 +35,15 @@ docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli start
 
 # === HABILITA IP FORWARDING ===
 echo "[+] Ativando IP forwarding..."
-sysctl -w net.ipv4.ip_forward=1
+sudo sysctl -w net.ipv4.ip_forward=1
 echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
 
 # === ADICIONA REGRA NAT ===
 echo "[+] Adicionando NAT para trafego da VPN para rede interna..."
-apt install -y netfilter-persistent
-iptables -t nat -C POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE 2>/dev/null \
-  || iptables -t nat -A POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE
-netfilter-persistent save
+sudo apt install -y netfilter-persistent
+sudo iptables -t nat -C POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE 2>/dev/null \
+  || sudo iptables -t nat -A POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE
+sudo netfilter-persistent save
 
 # === FINAL ===
 echo "[✓] OpenVPN Access Server instalado e configurado."
