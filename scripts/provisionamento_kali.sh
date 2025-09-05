@@ -34,7 +34,7 @@ SCRIPTS_TO_DOWNLOAD=(
   "docker_provision_kali.sh"
   "dhcp.sh"
   "openvpn.sh"
-  "cria_vpn_user.sh"
+  "criar_vpn_user.sh"
 )
 
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
@@ -74,7 +74,7 @@ echo
 echo "Rodando script de Instalacao Container oopnVPN..."
 mkdir /home/vagrant/openvpn
 cd /home/vagrant/openvpn
-mv /tmp/scripts/cria_vpn_user.sh .
+mv /tmp/scripts/criar_vpn_user.sh .
 mv /tmp/scripts/openvpn.sh .
 wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-openvpn/docker-compose.yml
 sudo bash openvpn.sh
