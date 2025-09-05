@@ -5,6 +5,9 @@ cd django-DefectDojo
 # Building Docker images
 docker compose build
 
+# Adicionar restart automatico
+sed -i '/image:/a \    restart: unless-stopped' docker-compose.yml
+
 # Run the application (for other profiles besides postgres-redis see  
 # https://github.com/DefectDojo/django-DefectDojo/blob/dev/readme-docs/DOCKER.md)
 docker compose up -d

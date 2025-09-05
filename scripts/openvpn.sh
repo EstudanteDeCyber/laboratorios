@@ -43,6 +43,9 @@ echo "[+] Adicionando NAT para trafego da VPN para rede interna..."
 sudo apt install -y netfilter-persistent
 sudo iptables -t nat -C POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE 2>/dev/null \
   || sudo iptables -t nat -A POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE
+
+# Altere para o seu IP na regra abaixo
+sudo iptables -A INPUT -p tcp -s 192.168.1.100 --dport 22 -j ACCEPT
 sudo netfilter-persistent save
 
 # === FINAL ===

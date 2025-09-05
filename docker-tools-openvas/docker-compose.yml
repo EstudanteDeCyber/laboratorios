@@ -4,7 +4,7 @@ services:
       - "7000:9392"
     environment:
       - "PASSWORD=admin"
-      - "USERNAME=admin"
+      - "USERNAME=adminopenvas"
       - "RELAYHOST=172.17.0.1"
       - "SMTPPORT=25"
       - "REDISDBS=512" # number of Redis DBs to use
@@ -19,6 +19,7 @@ services:
       - ./openvas_data:/data
     container_name: openvas
     image: immauss/openvas:latest
+    restart: unless-stopped
     networks:
       - sec-tools
 
