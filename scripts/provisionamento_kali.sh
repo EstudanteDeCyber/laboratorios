@@ -32,6 +32,9 @@ SCRIPTS_TO_DOWNLOAD=(
   "msg_final.sh"
   "crontab_ssh.sh"
   "docker_provision_kali.sh"
+  "dhcp.sh"
+  "openvpn.sh"
+  "cria_vpn_user.sh"
 )
 
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
@@ -51,35 +54,45 @@ echo "Rodando script de ajustes de SSH e USUÁRIOS..."
 sudo ./ssh_user_config.sh
 echo
 echo "Rodando script de Ajuste de Teclado..."
-#sudo ./ajuste_teclado.sh
+sudo ./ajuste_teclado.sh
 echo
 echo "Rodando script de Ajuste de Contrab..."
 sudo ./crontab_ssh.sh
 echo
-echo "Rodando script de Instalaxao do docker..."
+echo "Rodando script de Instalacao do docker..."
 sudo ./docker_provision_kali.sh
 echo
-
+echo "Rodando script de Instalacao Container oopnVPN..."
+mkdir /home/vagrant/openvpn
+cp /tmp/scripts/openvpn.sh /home/vagrant/openvpn/
+cp /tmp/scripts/cria_vpn_user.sh /home/vagrant/openvpn/ 
+sudo ./openvpn.sh
+echo
+echo "Rodando script de Instalacao e configuração do DNSMASQ..."
+sudo ./dhcp.sh
+echo
 # Lista de vms deployadas com o Vagrant
-cat << 'VMS' > /root/redes.sh
+cat << 'VMS' > /usr/bin/redes.sh
 for ip in 20 30 40 50 101 102; do ping -c 1 -w 1 10.10.10."$ip" | grep ttl; done
 VMS
-mv /root/redes.sh /usr/bin/redes.sh && chmod 755 /usr/bin/redes.sh
+chmod 755 /usr/bin/redes.sh
 cd /home/vagrant 
 ln -s /usr/bin/redes.sh redes.sh
 
 # Lista de apps e portas Vulneraveis
-cat << TOOLS > /home/vagrant/lista_tools.sh
+cat << TOOLS > /usr/bin/lista_tools.sh
 sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.101 "bash lab-sec/scripts/listar-container-portas.sh"
 TOOLS
-chown vagrant:vagrant lista_tools.sh && chmod u+x lista_tools.sh
+chmod 755 /usr/bin/lista_tools.sh
+ln -s /usr/bin/lista_tools.sh lista_tools.sh
 sudo apt install -y sshpass
 
 # Lista de apps e portas Vulneraveis
-cat << VULN > /home/vagrant/lista_vuln.sh
+cat << VULN > /usr/bin/lista_vuln.sh
 sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.102 "bash lab-sec/scripts/listar-container-portas.sh"
 VULN
-chown vagrant:vagrant lista_vuln.sh && chmod u+x lista_vuln.sh
+chmod 755 /usr/bin/lista_vuln.sh
+ln -s /usr/bin/lista_tools.sh lista_vuln.sh
 
 # --- Ajustar Placa de Rede ---
 echo "Ajustando a configuração da rede..."
@@ -89,7 +102,10 @@ auto lo
 iface lo inet loopback
 
 auto eth0
-iface eth0 inet dhcp
+iface eth0 inet static
+address 192.168.1.10
+netmask 255.255.255.0
+gateway 192.168.1.1
 
 auto eth1
 iface eth1 inet static
@@ -100,6 +116,11 @@ auto eth2
 iface eth2 inet static
 address 192.168.56.10
 netmask 255.255.255.0
+EONET
+
+# --- Ajustar DNS ---
+cat << 'EONET' > /etc/resolve.conf
+nameserver 1.1.1.1
 EONET
 
 echo "Clonando repositorios"
@@ -135,7 +156,7 @@ sudo docker run -it -v cloudfoxable
 cloudgoat list
 CLOUDFOXABLE
 
-sudo chown vagrant:vagrant /home/vagrant/*
+sudo chown -R vagrant:vagrant /home/vagrant/*
 
 # --- Mensagem Final ---
 bash /tmp/scripts/msg_final.sh 10.10.10.10
