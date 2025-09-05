@@ -50,25 +50,33 @@ echo
 # --- Execução dos Scripts Baixados ---
 echo "Executando scripts de provisionamento..."
 echo
+
 echo "Rodando script de ajustes de SSH e USUÁRIOS..."
 sudo ssh_user_config.sh
 echo
+
 echo "Rodando script de Ajuste de Teclado..."
 sudo ajuste_teclado.sh
 echo
+
 echo "Rodando script de Ajuste de Contrab..."
 sudo crontab_ssh.sh
 echo
+
 echo "Rodando script de Instalacao do docker..."
 sudo docker_provision_kali.sh
 echo
+
 echo "Rodando script de Instalacao e configuração do DNSMASQ..."
 sudo dhcp.sh
+echo
+
 echo "Rodando script de Instalacao Container oopnVPN..."
 mkdir /home/vagrant/openvpn && cd /home/vagrant/openvpn
-wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/refs/heads/main/docker-tools-openvpn/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-openvpn/docker-compose.yml
 sudo openvpn.sh
 echo
+
 # Lista de vms deployadas com o Vagrant
 cat << 'VMS' > /usr/bin/redes.sh
 for ip in 20 30 40 50 101 102; do ping -c 1 -w 1 10.10.10."$ip" | grep ttl; done
