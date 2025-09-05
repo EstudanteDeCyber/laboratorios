@@ -16,7 +16,7 @@ sudo apt-get upgrade -y || true
 sudo apt autoremove -y
 echo
 
-# Diretório para scripts
+# Diretorio para scripts
 echo "Criando diretório para scripts..."
 mkdir -p /tmp/scripts
 cd /tmp/scripts
@@ -42,16 +42,16 @@ for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
 done
 echo
 
-# Dar permissão de execução
-echo "Concedendo permissões de execução..."
+# Dar permissao de execucao
+echo "Concedendo permissoes de execucao..."
 chmod u+x *.sh
 echo
 
-# --- Execução dos Scripts Baixados ---
+# --- Execucao dos Scripts Baixados ---
 echo "Executando scripts de provisionamento..."
 echo
 
-echo "Rodando script de ajustes de SSH e USUÁRIOS..."
+echo "Rodando script de ajustes de SSH e USUARIOS..."
 sudo ssh_user_config.sh
 echo
 
@@ -67,7 +67,7 @@ echo "Rodando script de Instalacao do docker..."
 sudo docker_provision_kali.sh
 echo
 
-echo "Rodando script de Instalacao e configuração do DNSMASQ..."
+echo "Rodando script de Instalacao e configuracao do DNSMASQ..."
 sudo dhcp.sh
 echo
 
@@ -142,9 +142,9 @@ cd /home/vagrant/
 sudo docker pull rhinosecuritylabs/cloudgoat:latest
 
 cat << 'CLOUDGOAT' > /home/vagrant/readme_cloudgoat
-# Rodar o container (Voce ja cairá dentro dele)
+# Rodar o container (Voce ja caira dentro dele)
 sudo docker run -it rhinosecuritylabs/cloudgoat:latest
-# Exemplo de como listar os laboratórios disponíveis
+# Exemplo de como listar os laboratorios disponiveis
 cloudgoat list
 CLOUDGOAT
 
@@ -157,9 +157,9 @@ cd cloudfoxable
 sudo docker build --no-cache -t cloudfoxable .
 
 cat << 'CLOUDFOXABLE' > /home/vagrant/readme_cloudgoat
-# Rodar o container (Voce ja cairá dentro dele)
+# Rodar o container (Voce ja caira dentro dele)
 sudo docker run -it -v cloudfoxable
-# Exemplo de como listar os laboratórios disponíveis
+# Exemplo de como listar os laboratorios disponiveis
 cloudgoat list
 CLOUDFOXABLE
 
@@ -167,4 +167,4 @@ sudo chown -R vagrant:vagrant /home/vagrant/*
 
 # --- Mensagem Final ---
 bash /tmp/scripts/msg_final.sh 10.10.10.10
-echo "Configurações concluídas !!!"
+echo "Configuracoes concluidas !!!"
