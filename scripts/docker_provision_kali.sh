@@ -9,22 +9,29 @@ sudo timedatectl set-timezone America/Sao_Paulo
 
 ## Instalar PRÉ-REQUISITOS
 echo "Instalando pacotes pré-requisitos..."
-sudo apt install -y htop unzip curl ca-certificates apt-transport-https lsb-release gnupg jq
+sudo apt install -y htop unzip curl ca-certificates apt-transport-https lsb-release gnupg jq docker-compose
 
 ## Adicionando a instalação e configuração do Chrony
 echo "Instalando e configurando Chrony para sincronizar com ntp.br..."
+
 # Parar o serviço padrão de sincronização de tempo para evitar conflito
 sudo timedatectl set-ntp false
+
 # Remover o arquivo de configuração de exemplo
 sudo rm -f /etc/chrony/chrony.conf
+
 # Instalar Chrony
 sudo apt install -y chrony
+
 # Adicionar a configuração para sincronizar com servidores ntp.br
 sudo echo "server ntp.br iburst" | tee /etc/chrony/chrony.conf
+
 # Reiniciar o serviço Chrony
 sudo systemctl restart chrony
+
 # Habilitar o serviço Chrony
 sudo systemctl enable chrony
+
 # Verificar o status da sincronização
 chronyc sources
 

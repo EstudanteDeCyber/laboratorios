@@ -1,5 +1,16 @@
 services:
-  openvpn-as:                                                                                                               image: openvpn/openvpn-as                                                                                               container_name: openvpn-as                                                                                              restart: unless-stopped
-    ports:                                                                                                                    - "9943:943"                                                                                                            - "4443:443"                                                                                                            - "1194:1194/udp"
+  openvpn-as:
+    image: openvpn/openvpn-as
+    container_name: openvpn-as
+    restart: unless-stopped
+    ports:
+      - "9943:943"
+      - "4443:443"
+      - "1194:1194/udp"
     volumes:
-      - ./openvpn-data:/openvpn                                                                                             cap_add:                                                                                                                  - MKNOD                                                                                                                 - NET_ADMIN                                                                                                           devices:                                                                                                                  - "/dev/net/tun:/dev/net/tun"
+      - ./openvpn-data:/openvpn
+    cap_add:
+      - MKNOD
+      - NET_ADMIN
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
