@@ -63,13 +63,14 @@ echo "Rodando script de Instalacao do docker..."
 sudo ./docker_provision_kali.sh
 echo
 echo "Rodando script de Instalacao Container oopnVPN..."
-mkdir /home/vagrant/openvpn
+mkdir /home/vagrant/openvpn && de /home/vagrant/openvpn
+wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/refs/heads/main/docker-tools-openvpn/docker-compose.yml
 cp /tmp/scripts/openvpn.sh /home/vagrant/openvpn/
 cp /tmp/scripts/cria_vpn_user.sh /home/vagrant/openvpn/ 
-sudo ./openvpn.sh
+sudo ./home/vagrant/openvpn/openvpn.sh
 echo
 echo "Rodando script de Instalacao e configuração do DNSMASQ..."
-sudo ./dhcp.sh
+sudo ./tmp/scripts/dhcp.sh
 echo
 # Lista de vms deployadas com o Vagrant
 cat << 'VMS' > /usr/bin/redes.sh

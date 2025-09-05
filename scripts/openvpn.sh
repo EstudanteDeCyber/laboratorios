@@ -6,8 +6,8 @@ set -e
 VPN_SUBNET="172.27.224.0/20"         # Subnet padrão do OpenVPN-AS
 LAN_SUBNET="10.10.10.0/24"
 LAN_INTERFACE="eth1"
-VPN_DATA_DIR="/opt/openvpn-data"
-DOCKER_COMPOSE_FILE="/home/vagrant/lab-sec/docker-compose.yml"
+VPN_DATA_DIR="/home/vagrant/openvpn/openvpn-data"
+DOCKER_COMPOSE_FILE="/home/vagrant/openvpn/docker-compose.yml"
 #OPENVPN_ADMIN_PASS="changeme123"     # Senha padrão do admin
 SERVER_HOST="192.168.1.10"           # IP de acesso ao servidor web
 
