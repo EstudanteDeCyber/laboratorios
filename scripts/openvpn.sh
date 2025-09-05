@@ -6,7 +6,7 @@ set -e
 VPN_SUBNET="172.27.224.0/20"         # Subnet padrão do OpenVPN-AS
 LAN_SUBNET="10.10.10.0/24"
 LAN_INTERFACE="eth1"
-#OPENVPN_ADMIN_PASS="changeme123"     # Senha padrão do admin
+OPENVPN_ADMIN_PASS="changeme123"     # Senha padrão do admin
 SERVER_HOST="192.168.1.10"           # IP de acesso ao servidor web
 
 # === CRIA DIRETORIO DE DADOS ===
@@ -18,13 +18,13 @@ docker compose -f /home/vagrant/openvpn/docker-compose.yml up -d
 
 # === AGUARDA SUBIR ===
 echo "[+] Aguardando OpenVPN iniciar..."
-sleep 15
+sleep 60
 
 # === DEFINE SENHA DO ADMIN ===
-#echo "[+] Configurando usuario admin..."
+echo "[+] Configurando usuario admin..."
 #docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli --user openvpn --key "prop_superuser" --value "true" UserPropPut
-#docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli --user openvpn --key "type" --value "user_pass" UserPropPut
-#docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli --user openvpn --new_pass "$OPENVPN_ADMIN_PASS" SetLocalPassword
+docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli --user openvpn --key "type" --value "user_pass" UserPropPut
+docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli --user openvpn --new_pass "$OPENVPN_ADMIN_PASS" SetLocalPassword
 
 # === CONFIGURA ROTEAMENTO PARA A REDE INTERNA ===
 echo "[+] Configurando acesso a rede interna via CLI..."
@@ -36,7 +36,7 @@ docker exec openvpn-as /usr/local/openvpn_as/scripts/sacli start
 # === HABILITA IP FORWARDING ===
 echo "[+] Ativando IP forwarding..."
 sysctl -w net.ipv4.ip_forward=1
-grep -q "net.ipv4.ip_forward = 1" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
 
 # === ADICIONA REGRA NAT ===
 echo "[+] Adicionando NAT para trafego da VPN para rede interna..."
@@ -46,4 +46,4 @@ netfilter-persistent save
 
 # === FINAL ===
 echo "[✓] OpenVPN Access Server instalado e configurado."
-echo "[→] Acesse: https://$SERVER_HOST:943/"
+echo "[→] Acesse: https://$SERVER_HOST:9943/"

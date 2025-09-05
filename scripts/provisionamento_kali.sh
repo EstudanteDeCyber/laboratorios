@@ -12,7 +12,7 @@ sudo apt update
 sudo apt-get --fix-broken install -y || true
 sudo dpkg --configure -a || true
 sudo apt-get install -f -y || true
-sudo apt-get upgrade -y || true
+sudo apt-get upgrade -y
 sudo apt autoremove -y
 echo
 
@@ -74,6 +74,7 @@ echo
 echo "Rodando script de Instalacao Container oopnVPN..."
 mkdir /home/vagrant/openvpn
 cd /home/vagrant/openvpn
+mv /tmp/scripts/cria_vpn_user.sh .
 mv /tmp/scripts/openvpn.sh .
 wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-openvpn/docker-compose.yml
 sudo bash openvpn.sh
