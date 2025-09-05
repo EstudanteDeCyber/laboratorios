@@ -40,6 +40,7 @@ echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
 
 # === ADICIONA REGRA NAT ===
 echo "[+] Adicionando NAT para trafego da VPN para rede interna..."
+apt install -y netfilter-persistent
 iptables -t nat -C POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE 2>/dev/null \
   || iptables -t nat -A POSTROUTING -s "$VPN_SUBNET" -d "$LAN_SUBNET" -j MASQUERADE
 netfilter-persistent save
