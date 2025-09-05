@@ -72,7 +72,9 @@ sudo bash dhcp.sh
 echo
 
 echo "Rodando script de Instalacao Container oopnVPN..."
-mkdir /home/vagrant/openvpn && cd /home/vagrant/openvpn
+mkdir /home/vagrant/openvpn
+cd /home/vagrant/openvpn
+mv /opt/openvpn.sh .
 wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-openvpn/docker-compose.yml
 sudo bash openvpn.sh
 echo
