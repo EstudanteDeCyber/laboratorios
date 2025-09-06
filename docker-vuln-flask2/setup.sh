@@ -17,7 +17,9 @@ sed -i 's/arm/amd/g' compose.yaml
 
 # Ajustes de portas:
 sed -i 's/5000/5050/g' compose.yaml
+sed -i 's/3306/3336/g' compose.yaml
+sed -i 's/:3336/:3306/g' compose.yaml
 sed -i 's/5000/5050/g' Dockerfile
 sed -i 's/CMD \["flask", "run", "--debug"\]/CMD \["flask", "run", "--debug", "--host=0.0.0.0", "--port=5050"\]/g' Dockerfile
 
-docker-compose up -d
+docker compose up -d
