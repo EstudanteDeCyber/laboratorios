@@ -12,8 +12,8 @@ services:
       - DB_TYPE=sqlite3
       - DB_PATH=/app/gophish.db
       - ADMIN_LISTEN_ADDRESS=0.0.0.0:3333
-      - PHISH_LISTEN_ADDRESS=0.0.0.0:8080
-      - PHISH_HTTPS_LISTEN_ADDRESS=0.0.0.0:8443
+      - PHISH_LISTEN_ADDRESS=0.0.0.0:9191
+      - PHISH_HTTPS_LISTEN_ADDRESS=0.0.0.0:0443
     restart: unless-stopped
     networks:
       - sec-tools
