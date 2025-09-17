@@ -1,0 +1,113 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # Timeout e provider defaults
+  config.vm.boot_timeout = 1200
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+  #################
+  # --- IDP01 --- #
+  #################
+  
+  config.vm.define "IDP01_LAB_IAM" do |idp01|
+    idp01.vm.box = "debian/bookworm64"
+    idp01.vm.hostname = "idp01"
+    idp01.vm.network "private_network", ip: "10.10.10.30", virtualbox__intnet: "LAB_IAM", mac: "080027CC4430"
+    
+    idp01.vm.provider "virtualbox" do |vb|
+      vb.name = "IDP01_LAB_IAM"
+    end
+  # Pasta sincronizada local ./scripts/lnx -> /vagrant/synced_scripts na VM
+    idp01.vm.synced_folder "scripts/lnx", "/vagrant/synced_scripts"
+
+  # --- PROVISIONAMENTO COMUM A TODAS AS VMs LINUX---
+    idp01.vm.provision "shell", name: "copy_scripts", privileged: true, inline: <<-SHELL
+    echo "COPIANDO SCRIPTS DO DIRETORIO DE SINCRONIZACAO PARA /ROOT/SCRIPTS..."
+    
+    rm -rf /root/scripts
+    mkdir -p /root/scripts
+    cp -r /vagrant/synced_scripts/* /root/scripts/
+    
+    echo "SCRIPTS COPIADOS PARA /ROOT/SCRIPTS COM SUCESSO."
+    SHELL
+  
+    idp01.vm.provision "shell", path: "./scripts/lnx/idp01_provision.sh"
+  end
+
+    #################
+    # --- CLI01 --- #
+	#################
+	
+  config.vm.define "CLI01_LAB_IAM" do |cli01|
+    cli01.vm.box = "gusztavvargadr/windows-10"
+    #cli01.vm.box = "gusztavvargadr/windows-11"
+    #cli01.vm.box = "gusztavvargadr/ubuntu-desktop"
+    #cli01.vm.box = "gusztavvargadr/ubuntu-desktop-2404-lts"	
+    cli01.vm.hostname = "cli01"
+    cli01.vm.network "private_network", ip: "10.10.10.32", virtualbox__intnet: "LAB_IAM", mac: "080027CC4432"
+  
+    cli01.vm.provider "virtualbox" do |vb|
+      vb.name = "CLI01_LAB-AD"
+      vb.gui = true
+      vb.memory = 6144
+    end
+  
+    cli01.vm.synced_folder "scripts/win", "C:/synced_scripts"
+  
+    # --- PROVISIONAMENTO COMUM A TODAS AS VMs ---
+    cli01.vm.provision "shell", name: "copy_scripts", inline: <<-PS
+      Write-Host "COPIANDO SCRIPTS DO DIRETORIO DE SINCRONIZACAO PARA C:/TMP...".ToUpper()
+      Remove-Item -Path "C:\\tmp" -Recurse -Force -ErrorAction SilentlyContinue
+      New-Item -Path "C:\\tmp" -ItemType Directory -Force
+      Copy-Item -Path "C:\\synced_scripts\\*" -Destination "C:\\tmp" -Recurse -Force
+      Write-Host "SCRIPTS COPIADOS PARA C:/TMP COM SUCESSO.".ToUpper()
+    PS
+  
+    cli01.vm.provision "shell", name: "remove_bloatware", inline: <<-SHELL
+      #powershell -ExecutionPolicy Bypass -File "C:\\tmp\\clean_bloatware_safe.ps1"
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\clean_bloatware_agressive.ps1"
+    SHELL
+	
+    cli01.vm.provision "reload"  
+    
+	cli01.vm.provision "shell", name: "install_apps", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\install_apps.ps1"
+    SHELL
+  
+    cli01.vm.provision "reload"
+  end
+  
+  ################
+  # --- APPs --- #
+  ################
+  
+  config.vm.define "APPS_LAB_IAM" do |apps|
+    apps.vm.box = "debian/bookworm64"
+    apps.vm.hostname = "apps"
+    apps.vm.network "private_network", ip: "10.10.10.31", virtualbox__intnet: "LAB_IAM", mac: "080027CC4431"
+    
+    apps.vm.provider "virtualbox" do |vb|
+      vb.name = "APPS_LAB_IAM"
+    end
+  # Pasta sincronizada local ./scripts/lnx -> /vagrant/synced_scripts na VM
+    apps.vm.synced_folder "scripts/lnx", "/vagrant/synced_scripts"
+
+  # --- PROVISIONAMENTO COMUM A TODAS AS VMs LINUX---
+    apps.vm.provision "shell", name: "copy_scripts", privileged: true, inline: <<-SHELL
+    echo "COPIANDO SCRIPTS DO DIRETORIO DE SINCRONIZACAO PARA /ROOT/SCRIPTS..."
+    
+    rm -rf /root/scripts
+    mkdir -p /root/scripts
+    cp -r /vagrant/synced_scripts/* /root/scripts/
+    
+    echo "SCRIPTS COPIADOS PARA /ROOT/SCRIPTS COM SUCESSO."
+    SHELL
+  
+    apps.vm.provision "shell", path: "./scripts/lnx/apps_provision_v6.sh"
+  end
+end

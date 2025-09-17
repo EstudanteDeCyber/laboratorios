@@ -1,0 +1,85 @@
+Vagrant.configure("2") do |config|
+  config.vm.boot_timeout = 1200
+  config.vm.communicator = "winrm"
+  config.winrm.retry_limit = 100
+  config.winrm.retry_delay = 15
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = true
+    vb.memory = 6144
+    vb.cpus = 2
+  end
+
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "scripts/", "C:/synced_scripts"
+  # --- PROVISIONAMENTO COMUM A TODAS AS VMs ---
+  config.vm.provision "shell", name: "copy_scripts", privileged: false, inline: <<-PS
+    Write-Host "COPIANDO SCRIPTS DO DIRETORIO DE SINCRONIZACAO PARA C:/TMP...".ToUpper()
+    Remove-Item -Path "C:\\tmp" -Recurse -Force -ErrorAction SilentlyContinue
+    New-Item -Path "C:\\tmp" -ItemType Directory -Force
+    Copy-Item -Path "C:\\synced_scripts\\*" -Destination "C:\\tmp" -Recurse -Force
+    Write-Host "SCRIPTS COPIADOS PARA C:/TMP COM SUCESSO.".ToUpper()
+  PS
+
+  config.vm.provision "shell", name: "remove_bloatware", inline: <<-SHELL
+    powershell -ExecutionPolicy Bypass -File "C:\\tmp\\clean_bloatware_all_agressive.ps1"
+  SHELL
+
+  # --- SRV01 ---
+  config.vm.define "SRV01_LAB-AD" do |srv01|
+    srv01.vm.box = "gusztavvargadr/windows-server-2022-standard"
+    srv01.vm.hostname = "SRV01"
+
+    srv01.vm.provider "virtualbox" do |vb|
+      vb.name = "SRV01_LAB-AD"
+    end
+
+    srv01.vm.provision "reload"
+
+    srv01.vm.provision "shell", name: "install_rsat", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\rsat-tools.ps1"
+    SHELL
+
+    srv01.vm.provision "shell", name: "install_apps", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\install_apps.ps1"
+    SHELL
+  end
+
+  # --- CLI01 ---
+  config.vm.define "CLI01_LAB-AD" do |cli01|
+    cli01.vm.box = "gusztavvargadr/windows-10"
+    cli01.vm.hostname = "CLI01"
+
+    cli01.vm.provider "virtualbox" do |vb|
+      vb.name = "CLI01_LAB-AD"
+    end
+
+    cli01.vm.provision "reload"
+
+    cli01.vm.provision "shell", name: "install_rsat", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\rsat-tools.ps1"
+    SHELL
+
+    cli01.vm.provision "shell", name: "install_apps", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\install_apps.ps1"
+    SHELL
+  end
+
+  # --- DC01 ---
+  config.vm.define "DC01_LAB-AD" do |dc01|
+    dc01.vm.box = "gusztavvargadr/windows-server-2022-standard-core"
+    dc01.vm.hostname = "DC01"
+
+    dc01.vm.provider "virtualbox" do |vb|
+      vb.name = "DC01_LAB-AD"
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+
+    dc01.vm.provision "shell", name: "install_ad", inline: <<-PS
+      Write-Host "INSTALANDO A FEATURE AD-DOMAIN-SERVICES...".ToUpper()
+      Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
+      Write-Host "FEATURE INSTALADA COM SUCESSO.".ToUpper()
+    PS
+  end
+end
