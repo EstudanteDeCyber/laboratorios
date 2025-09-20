@@ -3,9 +3,10 @@ services:
     image: inbucket/inbucket
     container_name: inbucket
     ports:
-      - "8025:8025" # Admin interface
-      - "9000:9000" # Mail Interface
-      - "10025:10025" # Mail interface
+      - "8025:8025" # Mail interface Interno
+      - "9000:9000" # Admin Interface
+      - "10025:10025" # Mail interface Interno
+      - "2500:2500" # smtp externo
     restart: unless-stopped
     networks:
       - sec-tools
