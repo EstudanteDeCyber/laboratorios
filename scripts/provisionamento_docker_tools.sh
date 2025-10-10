@@ -29,7 +29,7 @@ git clone https://github.com/EstudanteDeCyber/lab-sec.git
 
 # --- Ajustes de User Vagrant e SSH ---
 echo "Configurando usuário e SSH..."
-cd /home/vagrant/lab-sec/scripts
+cd /home/vagrant/laboratorio/scripts
 chmod u+x *
 sudo ./ssh_user_config.sh
 
@@ -46,28 +46,28 @@ echo "Iniciando o deploy dos containers de ferramentas ..."
 
 # Horusec
 echo "Configurando Horusec..."
-cd /home/vagrant/lab-sec/horusec
+cd /home/vagrant/laboratorio/horusec
 chmod u+x setup.sh && bash setup.sh
 
 # HashiCorp Vault
 echo "Configurando HashiCorp Vault..."
-cd /home/vagrant/lab-sec/docker-tools-hashicorp_vault/
+cd /home/vagrant/laboratorio/docker-tools-hashicorp_vault/
 chmod u+x setup.sh && sudo bash setup.sh
 sudo chmod 644 /var/services/vault/userconfig/tls/vault.key
 
 # Todos os outros containers (Docker-Tools)
 echo "Subindo todos os outros containers..."
-cd /home/vagrant/lab-sec/scripts
+cd /home/vagrant/laboratorio/scripts
 bash up_all_containers_tools.sh
 
 # DefectDojo
 echo "Configurando DefectDojo..."
-cd /home/vagrant/lab-sec/docker-tools-django-DefectDojo
+cd /home/vagrant/laboratorio/docker-tools-django-DefectDojo
 chmod u+x setup.sh && bash setup.sh
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
-cd /home/vagrant/lab-sec/scripts
+cd /home/vagrant/laboratorio/scripts
 sudo ./ajuste_teclado.sh
 
 # --- Listar Portas dos Containers ---

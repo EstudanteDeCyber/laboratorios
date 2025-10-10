@@ -38,7 +38,7 @@ SCRIPTS_TO_DOWNLOAD=(
 )
 
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
-  wget -O "$script" "https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/$script"
+  wget -O "$script" "https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main//scripts/$script"
 done
 echo
 
@@ -76,7 +76,7 @@ mkdir /home/vagrant/openvpn
 cd /home/vagrant/openvpn
 mv /tmp/scripts/criar_vpn_user.sh .
 mv /tmp/scripts/openvpn.sh .
-wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-openvpn/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main/lab-tools/docker-tools/-openvpn/docker-compose.yml
 sudo bash openvpn.sh
 echo
 

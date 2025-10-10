@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     
 	# Baixa o script de provisionamento principal do GitHub
-    wget -O /tmp/provisionamento_docker_tools.sh https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/provisionamento_docker_tools.sh
+    wget -O /tmp/provisionamento_docker_tools.sh https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main//scripts/provisionamento_docker_tools.sh
     chmod +x /tmp/provisionamento_docker_tools.sh
     
     # Executa o script

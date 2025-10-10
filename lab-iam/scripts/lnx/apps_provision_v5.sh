@@ -20,8 +20,8 @@ apt-get install -y python3 python3-venv python3-pip build-essential nginx
 
 mkdir inbucket
 cd inbucket
-wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-inbucket/docker-compose.yml
-wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/docker_provision.sh
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main/lab-tools/docker-tools/-inbucket/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main/lab-tools/scripts//docker_provision.sh
 chmod u+x docker_provision.sh
 sudo bash docker_provision.sh
 docker compose up -d

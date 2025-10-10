@@ -29,7 +29,7 @@ git clone https://github.com/EstudanteDeCyber/lab-sec.git
 
 # --- Ajustes de User Vagrant e SSH ---
 echo "Configurando usuário e SSH..."
-cd /home/vagrant/lab-sec/scripts
+cd /home/vagrant/laboratorio/scripts
 chmod u+x *
 sudo ./ssh_user_config.sh
 
@@ -44,47 +44,47 @@ sudo apt install docker-compose
 
 # --- Download e UP dos Containers Vulneraveis prontos ---
 echo "Iniciando o deploy dos containers de ferramentas e aplicações vulneráveis..."
-cd /home/vagrant/lab-sec/scripts/
+cd /home/vagrant/laboratorio/scripts/
 bash up_all_containers_vuln.sh
 
 # --- Download e Build dos Containers Vulneraveis - NODEGOAT PORTA 4000 ---
-cd /home/vagrant/lab-sec/docker-vuln-NodeGoat/
+cd /home/vagrant/laboratorio/docker-vuln-NodeGoat/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - SECURITYSHEPERD PORTAS 80 e 443 ---
-cd /home/vagrant/lab-sec/docker-vuln-Securityshepherd/
+cd /home/vagrant/laboratorio/docker-vuln-Securityshepherd/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - crAPI PORTAS PORTAS 8443 e 8888 ---
-cd /home/vagrant/lab-sec/docker-vuln-crAPI/
+cd /home/vagrant/laboratorio/docker-vuln-crAPI/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - FLASKAPP PORTA 5050 ---
-cd /home/vagrant/lab-sec/docker-vuln-Flask_App/
+cd /home/vagrant/laboratorio/docker-vuln-Flask_App/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - FLASKAPP2 PORTA 5000 ---
-cd /home/vagrant/lab-sec/docker-vuln-flask2/
+cd /home/vagrant/laboratorio/docker-vuln-flask2/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - PiXi PORTA 8000 ---
-cd /home/vagrant/lab-sec/docker-vuln-Pixi/
+cd /home/vagrant/laboratorio/docker-vuln-Pixi/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - BANK PORTA 5005 ---
-cd /home/vagrant/lab-sec/docker-vuln-bank/
+cd /home/vagrant/laboratorio/docker-vuln-bank/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Ajustar Teclado ---
 echo "Ajustando o layout do teclado..."
-cd /home/vagrant/lab-sec/scripts
+cd /home/vagrant/laboratorio/scripts
 sudo ./ajuste_teclado.sh
 
 # --- Listar Portas dos Containers ---

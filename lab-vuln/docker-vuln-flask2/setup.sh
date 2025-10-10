@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/vagran/lab-sec/docker-vuln-flask2
+cd /home/vagran/laboratorio/docker-vuln//docker-vuln-flask2
 
 git clone https://github.com/Lucas-Vini/vul-flask
 
