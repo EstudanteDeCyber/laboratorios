@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/vagrant/laboratorio/lab-vuln//docker-vuln-bank
+cd /home/vagrant/laboratorios/lab-vuln//docker-vuln-bank
 
 git clone https://github.com/Commando-X/vuln-bank.git
 

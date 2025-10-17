@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variáveis de diretório
-BASE_DIR="/home/vagrant/laboratorio/lab-vuln/docker-vuln-Flask_App"
+BASE_DIR="/home/vagrant/laboratorios/lab-vuln/docker-vuln-Flask_App"
 REPO_DIR="$BASE_DIR/extremely-vulnerable-flask-app"
 
 # Garante que o diretório base existe

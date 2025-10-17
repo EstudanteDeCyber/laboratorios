@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define diretório de trabalho
-WORKDIR="/home/vagrant/laboratorio/lab-vuln/docker-vuln-NodeGoat"
+WORKDIR="/home/vagrant/laboratorios/lab-vuln/docker-vuln-NodeGoat"
 
 # Clona o repositório se ainda não existir
 cd "$WORKDIR"

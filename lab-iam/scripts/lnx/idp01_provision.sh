@@ -7,8 +7,8 @@ set -e
 
 mkdir inbucket
 cd inbucket
-wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main/lab-tools/docker-tools/-inbucket/docker-compose.yml
-wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main/lab-tools/scripts//docker_provision.sh
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/docker-tools/-inbucket/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/scripts//docker_provision.sh
 chmod u+x docker_provision.sh
 sudo bash docker_provision.sh
 docker compose up -d

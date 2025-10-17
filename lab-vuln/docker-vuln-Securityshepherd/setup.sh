@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Diretório de trabalho
-WORKDIR="/home/vagrant/laboratorio/lab-vuln/docker-vuln-Securityshepherd"
+WORKDIR="/home/vagrant/laboratorios/lab-vuln/docker-vuln-Securityshepherd"
 
 # Atualiza os pacotes e instala as dependências
 sudo apt update

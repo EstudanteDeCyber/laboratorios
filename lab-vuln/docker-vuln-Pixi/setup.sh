@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/vagrant/laboratorio/lab-vuln/docker-vuln-Pixi
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-Pixi
 
 git clone https://github.com/DevSlop/Pixi
 

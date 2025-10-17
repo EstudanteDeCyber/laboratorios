@@ -18,7 +18,7 @@ Requires=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=true
-WorkingDirectory=/home/vagrant/laboratorio/lab-tools/docker-tools/-django-DefectDojo/django-DefectDojo/
+WorkingDirectory=/home/vagrant/laboratorios/lab-tools/docker-tools/-django-DefectDojo/django-DefectDojo/
 ExecStart=/usr/bin/docker compose -f docker-compose.yml up -d
 ExecStop=/usr/bin/docker compose -f docker-compose.yml down
 TimeoutStartSec=0

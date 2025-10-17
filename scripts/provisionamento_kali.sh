@@ -38,7 +38,7 @@ SCRIPTS_TO_DOWNLOAD=(
 )
 
 for script in "${SCRIPTS_TO_DOWNLOAD[@]}"; do
-  wget -O "$script" "https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main//scripts/$script"
+  wget -O "$script" "https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main//scripts/$script"
 done
 echo
 
@@ -76,7 +76,7 @@ mkdir /home/vagrant/openvpn
 cd /home/vagrant/openvpn
 mv /tmp/scripts/criar_vpn_user.sh .
 mv /tmp/scripts/openvpn.sh .
-wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorio/main/lab-tools/docker-tools/-openvpn/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/docker-tools/-openvpn/docker-compose.yml
 sudo bash openvpn.sh
 echo
 
@@ -147,7 +147,7 @@ sudo docker pull rhinosecuritylabs/cloudgoat:latest
 cat << 'CLOUDGOAT' > /home/vagrant/readme_cloudgoat
 # Rodar o container (Voce ja caira dentro dele)
 sudo docker run -it rhinosecuritylabs/cloudgoat:latest
-# Exemplo de como listar os laboratorios disponiveis
+# Exemplo de como listar os laboratorioss disponiveis
 cloudgoat list
 CLOUDGOAT
 
@@ -162,7 +162,7 @@ sudo docker build --no-cache -t cloudfoxable .
 cat << 'CLOUDFOXABLE' > /home/vagrant/readme_cloudgoat
 # Rodar o container (Voce ja caira dentro dele)
 sudo docker run -it -v cloudfoxable
-# Exemplo de como listar os laboratorios disponiveis
+# Exemplo de como listar os laboratorioss disponiveis
 cloudgoat list
 CLOUDFOXABLE
 
