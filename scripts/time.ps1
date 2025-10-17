@@ -1,11 +1,12 @@
 # Define a mensagem de ajuda e uso
 $scriptName = $MyInvocation.MyCommand.Name
 $helpMessage = @"
-Uso: .\$scriptName .\meu-script-de-teste.ps1 -argumento1 "valor do argumento"
+Uso:
+  .\$scriptName .\meu-script.ps1 -arg1 "valor"
+  .\$scriptName vagrant -d destroy --vagrantfile=Vagrantfile_custom
 
 Descrição:
-Mede o tempo de execução de um script PowerShell e seus argumentos, exibindo a saída no console.
-
+Mede o tempo de execução de um script PowerShell ou comando externo (ex: vagrant, docker), exibindo a saída no console.
 "@
 
 # Verifica se o script foi executado sem argumentos ou com o argumento 'help'
@@ -14,46 +15,64 @@ if ($args.Count -eq 0 -or $args[0] -eq "help") {
     exit 1
 }
 
-# Lógica de argumentos robusta (permanece a mesma)
-$ScriptToRun = $args[0]
-$ArgumentsForScript = @()
-if ($args.Count -gt 1) {
-    $ArgumentsForScript = $args[1..($args.Count - 1)]
-}
+# Diretório onde está o script atual
+$CurrentScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 
-# Validação do caminho (permanece a mesma)
+# Coleta o primeiro argumento (pode ser script ou comando)
+$FirstArg = $args[0]
+$RemainingArgs = if ($args.Count -gt 1) { $args[1..($args.Count - 1)] } else { @() }
+
+# Inicializa variável de execução
+$runAsScript = $false
+$scriptPath = $null
+
+# Verifica se é um script existente
 try {
-    $scriptPath = Resolve-Path -Path $ScriptToRun -ErrorAction Stop
+    # Se for caminho relativo, ajusta para o diretório do script atual
+    if (-not [System.IO.Path]::IsPathRooted($FirstArg)) {
+        $FirstArg = Join-Path -Path $CurrentScriptDirectory -ChildPath $FirstArg
+    }
+
+    # Tenta resolver o caminho do script
+    $scriptPath = Resolve-Path -Path $FirstArg -ErrorAction Stop
+
+    # Verifica se é um arquivo mesmo
+    if (Test-Path -Path $scriptPath -PathType Leaf) {
+        $runAsScript = $true
+    }
 }
 catch {
-    Write-Host "Erro: Não foi possível encontrar o script em '$ScriptToRun'." -ForegroundColor Red
-    exit 1
+    # Se falhar, vamos tratar como comando externo
+    $runAsScript = $false
 }
 
-if (-not (Test-Path -Path $scriptPath -PathType Leaf)) {
-    Write-Host "Erro: O arquivo de script não foi encontrado em '$scriptPath'." -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "Executando script: $scriptPath" -ForegroundColor Yellow
-if ($ArgumentsForScript) {
-    Write-Host "Com argumentos: $($ArgumentsForScript -join ' ')" -ForegroundColor Cyan
-}
-
-# --- MUDANÇA FINAL: Execução condicional dentro do Measure-Command ---
-$executionTime = Measure-Command -Expression {
-    # Verifica se a nossa lista de argumentos está realmente preenchida.
-    # Um array não-vazio é avaliado como $true. Um array vazio é $false.
-    if ($ArgumentsForScript) {
-        # Se TEMOS argumentos, executa o script passando-os.
-        & $scriptPath $ArgumentsForScript | Out-Default
+# --- Execução com tempo medido ---
+$executionTime = Measure-Command {
+    try {
+        if ($runAsScript) {
+            Write-Host "Executando script: $scriptPath" -ForegroundColor Yellow
+            if ($RemainingArgs) {
+                Write-Host "Com argumentos: $($RemainingArgs -join ' ')" -ForegroundColor Cyan
+                & $scriptPath @RemainingArgs | Out-Default
+            }
+            else {
+                & $scriptPath | Out-Default
+            }
+        }
+        else {
+            # Trata como comando genérico
+            $fullCommand = $args -join ' '
+            Write-Host "Executando comando: $fullCommand" -ForegroundColor Yellow
+            Invoke-Expression $fullCommand
+        }
     }
-    else {
-        # Se NÃO TEMOS argumentos, executa o script de forma limpa, sem nada extra.
-        & $scriptPath | Out-Default
+    catch {
+        Write-Host "`nErro durante a execução:" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        exit 1
     }
 }
-Write-Host " "
+
+# --- Resultado ---
 Write-Host "`n--- Resultado ---"
 Write-Host "Tempo de execução: $($executionTime.TotalSeconds) segundos = $($executionTime.TotalMinutes) minutos" -ForegroundColor Green
-Write-Host " "
