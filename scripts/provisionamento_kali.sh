@@ -91,14 +91,14 @@ ln -s /usr/bin/redes.sh redes.sh
 # Lista de apps e portas Vulneraveis
 sudo apt install -y sshpass
 cat << TOOLS > /usr/bin/lista_tools.sh
-sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.101 "bash lab-sec/scripts/listar-container-portas.sh"
+sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.101 "bash laboratorios/scripts/listar-container-portas.sh"
 TOOLS
 chmod 755 /usr/bin/lista_tools.sh
 ln -s /usr/bin/lista_tools.sh lista_tools.sh
 
 # Lista de apps e portas Vulneraveis
 cat << VULN > /usr/bin/lista_vuln.sh
-sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.102 "bash lab-sec/scripts/listar-container-portas.sh"
+sshpass -p 'vagrant' ssh -o StrictHostKeyChecking=no vagrant@10.10.10.102 "bash laboratorios/scripts/listar-container-portas.sh"
 VULN
 chmod 755 /usr/bin/lista_vuln.sh
 ln -s /usr/bin/lista_vuln.sh lista_vuln.sh

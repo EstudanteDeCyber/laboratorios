@@ -22,10 +22,10 @@ sudo apt update
 sudo apt install -y git
 
 # --- Clonagem do Repositório ---
-echo "Clonando o repositório lab-sec..."
+echo "Clonando o repositório laboratorios..."
 # Navega para o diretório /home/vagrant antes de clonar
 cd /home/vagrant/
-git clone https://github.com/EstudanteDeCyber/lab-sec.git
+git clone https://github.com/EstudanteDeCyber/laboratorios.git
 
 # --- Ajustes de User Vagrant e SSH ---
 echo "Configurando usuário e SSH..."
