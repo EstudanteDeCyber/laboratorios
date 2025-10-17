@@ -76,7 +76,7 @@ mkdir /home/vagrant/openvpn
 cd /home/vagrant/openvpn
 mv /tmp/scripts/criar_vpn_user.sh .
 mv /tmp/scripts/openvpn.sh .
-wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/docker-tools/-openvpn/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/docker-tools-openvpn/docker-compose.yml
 sudo bash openvpn.sh
 echo
 
