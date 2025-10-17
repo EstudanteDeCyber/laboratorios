@@ -1,0 +1,4 @@
+- regra para liberar ping entre as maquinas no firewall (cli e srv)
+- search na cli ~apareceu em novo user, resto ok
+- retirar placa host only no script de pós para a cli
+- validar script de "validação do AD"

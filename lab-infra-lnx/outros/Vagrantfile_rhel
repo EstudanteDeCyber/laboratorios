@@ -1,0 +1,65 @@
+	  elif [ -f /etc/redhat-release ]; then
+	    # Rocky Linux
+		localectl set-keymap br-abnt2 || echo " Falha ao definir layout br-abnt2 via localectl"
+		localectl set-x11-keymap br abnt2 || echo " Falha ao definir layout X11 br-abnt2"
+		echo "KEYMAP=br-abnt2" > /etc/vconsole.conf
+		loadkeys br-abnt2 || loadkeys br || echo " Layout de teclado não encontrado"
+	  fi  
+  
+  # Clusters Debian com IP fixo via DHCP
+#  3.times do |i|
+#    mac = format("080027CC%04d", i + 1)
+#    config.vm.define "rocky-n#{i+1}" do |node|
+#      node.vm.box = "rockylinux/9"
+#      node.vm.box_version = "6.0.0"
+#      node.vm.hostname = "rocky-n#{i+1}"
+#      node.vm.network "private_network",
+#        type: "dhcp",
+#        virtualbox__intnet: "infraopen_network",
+#        mac: mac
+#
+#      node.vm.provider "virtualbox" do |vb|
+#        vb.memory = 1024
+#        vb.cpus = 1
+#        vb.name = "rocky-n#{i+1}"
+#        vb.customize ["modifyvm", :id, "--usb", "off"]
+#        vb.customize ["modifyvm", :id, "--audio", "none"]
+#      end
+#
+##	  node.vm.synced_folder "D:/VMs/VirtualBox/InfraOpen", "/tmp_scripts"
+#      config.vm.synced_folder "D:/VMs/VirtualBox/InfraOpen", "/tmp_scripts", type: "rsync"
+#
+#	  node.vm.provision "shell", inline: <<-SHELL
+#	  
+#	  # Cria diretório .ssh se não existir
+#      if ! id -u hugom >/dev/null 2>&1; then
+#		useradd -m -s /bin/bash hugom
+#		echo "hugom:change-me" | chpasswd
+#		usermod -aG wheel hugom || true
+#		cp /etc/skel/.bashrc /home/hugom/
+#		cp /etc/skel/.bash_profile /home/hugom/ || true
+#		chown hugom:hugom /home/hugom/.bashrc /home/hugom/.bash_profile || true
+#	  fi
+#	  
+#  	  # Cria diretório .ssh se não existir
+#	  mkdir -p /home/hugom/.ssh
+#	  chown hugom:hugom /home/hugom/.ssh
+#	  chmod 700 /home/hugom/.ssh
+#
+#	  # Adiciona chave pública do firewall
+#	  if [ -f /tmp_scripts/firewall_id_rsa.pub ]; then
+#        cat /tmp_scripts/firewall_id_rsa.pub >> /home/hugom/.ssh/authorized_keys
+#        chown hugom:hugom /home/hugom/.ssh/authorized_keys
+#        chmod 600 /home/hugom/.ssh/authorized_keys
+#	  else
+#	    echo " firewall_id_rsa.pub não encontrado!"
+#	  fi	
+#	
+#	  dnf -y update
+#
+#      echo "Desligando a VM rocky-n#{i+1} para ajustes manuais..."
+#      
+#	  poweroff
+#      SHELL
+#    end
+#  end

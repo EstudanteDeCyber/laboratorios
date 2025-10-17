@@ -4,11 +4,6 @@
 
 Write-Host "=== AJUSTANDO REDE NO CLI01 ===" -ForegroundColor Cyan
 
-# Solicita usuario e senha do dominio
-$domainUser     = Read-Host "DIGITE O USUARIO DO DOMINIO (EX: LAB\ADMINISTRATOR)"
-$domainPassword = Read-Host "DIGITE A SENHA DO USUARIO" -AsSecureString
-$credential     = New-Object System.Management.Automation.PSCredential($domainUser, $domainPassword)
-
 # Variaveis de rede (sem gateway e DNS)
 $ipAddress     = "10.10.10.32"
 $prefixLength  = 24

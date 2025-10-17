@@ -1,0 +1,28 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-attacker-egress
+  namespace: red
+spec:
+  podSelector:
+    matchLabels:
+      app: attacker
+  policyTypes:
+  - Egress
+  egress: []   # bloqueia todo egress do attacker
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-only-allow-frontend
+  namespace: app
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: frontend

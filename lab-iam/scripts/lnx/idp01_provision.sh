@@ -7,8 +7,8 @@ set -e
 
 mkdir inbucket
 cd inbucket
-wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/docker-tools/-inbucket/docker-compose.yml
-wget https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/lab-tools/scripts//docker_provision.sh
+wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/docker-tools-inbucket/docker-compose.yml
+wget https://raw.githubusercontent.com/EstudanteDeCyber/lab-sec/main/scripts/docker_provision.sh
 chmod u+x docker_provision.sh
 sudo bash docker_provision.sh
 docker compose up -d
@@ -100,6 +100,20 @@ ln -sf /etc/nginx/sites-available/keycloak.conf /etc/nginx/sites-enabled/keycloa
 
 # Testar e recarregar nginx
 nginx -t && systemctl reload nginx
+
+# ===============================================================
+# Ajustar Placa de REDE para o IP específico
+# ===============================================================
+cp /etc/network/interfaces /etc/network/interfaces.bak || true
+cat << 'EONET' > /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+address 10.10.10.30
+netmask 255.255.255.0
+EONET
 
 # Backup do arquivo sshd_config original
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak

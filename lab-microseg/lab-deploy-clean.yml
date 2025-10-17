@@ -1,0 +1,23 @@
+- hosts: lab-master
+  become: yes
+  tasks:
+    - name: Garantir que não estamos rodando no lab-controller
+      assert:
+        that: "'lab-controller' not in inventory_hostname"
+        fail_msg: "❌ Tentativa de aplicar manifests no lab-controller! Abortando."
+        success_msg: "✔️ Host válido para deploy: {{ inventory_hostname }}"
+
+    - name: Criar namespace app (idempotente)
+      shell: kubectl create ns app --dry-run=client -o yaml | kubectl apply -f -
+      args:
+        warn: false
+
+    - name: Aplicar manifest do backend
+      shell: kubectl apply -f /vagrant/manifests/backend-deploy.yaml
+      args:
+        warn: false
+
+    - name: Aplicar manifest do frontend
+      shell: kubectl apply -f /vagrant/manifests/frontend-deploy.yaml
+      args:
+        warn: false

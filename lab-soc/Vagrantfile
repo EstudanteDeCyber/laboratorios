@@ -1,0 +1,77 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# | VM             | IP Privado   | Rede Interna | MAC (exemplo)     |
+# | -------------- | ------------ | ------------ | ----------------- |
+# | stack-core     | 10.10.10.200 | LAB_SOC      | 08:00:27:FF:51:00 |
+# | ai-node        | 10.10.10.201 | LAB_SOC      | 08:00:27:FF:51:01 |
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "debian/bookworm64"
+
+  # Scripts globais aplicados a todas as VMs
+  global_provisioners = [
+    { type: "shell", path: "scripts/atualizacao.sh", privileged: true },
+    { type: "shell", path: "scripts/docker_provision.sh", privileged: true }
+  ]
+
+  nodes = [
+    {name: 'stack-core', ip: '10.10.10.200', mem: 16384},
+    {name: 'ai-node',    ip: '10.10.10.201', mem: 16384}
+  ]
+
+  base_mac_prefix = "080027FF"
+
+  nodes.each_with_index do |n, i|
+    mac_suffix = "51%02d" % i
+    full_mac = base_mac_prefix + mac_suffix
+
+    config.vm.define n[:name] do |node|
+      node.vm.hostname = n[:name]
+
+      # Interface privada na rede LAB_SOC
+      node.vm.network "private_network",
+                      ip: n[:ip],
+                      virtualbox__intnet: "LAB_SOC",
+                      mac: full_mac
+
+      # Adiciona segunda interface de rede para stack-core
+      if n[:name] == 'stack-core'
+        node.vm.network "private_network",
+                        ip: "192.168.56.50",
+                        virtualbox__hostonly: true
+      end
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = n[:name]
+        vb.memory = n[:mem]
+        vb.cpus = 4
+      end
+
+	  # Sincroniza a pasta "scripts" local para dentro da VM
+	  node.vm.synced_folder "./scripts", "/vagrant_scripts", type: "virtualbox"
+	  
+	  # Copia os scripts para uma pasta persistente dentro da VM
+	  node.vm.provision "shell", inline: <<-SHELL
+	  mkdir -p /opt/scripts
+	  cp -r /vagrant_scripts/* /opt/scripts/
+	  chmod u+x /opt/scripts/*.sh
+	  SHELL
+
+      # Aplica os provisionamentos globais
+      global_provisioners.each do |prov|
+        node.vm.provision prov[:type], path: prov[:path], privileged: prov[:privileged]
+      end
+
+      # Provisionamentos especificos (comentados)
+      # if n[:name] == 'stack-core'
+      #   node.vm.provision "shell", path: "scripts/stack-core_setup.sh", privileged: true
+      # end
+      # if n[:name] == 'ai-node'
+      #   node.vm.provision "shell", path: "scripts/ai-node_setup.sh", privileged: true
+      # end
+    end
+  end
+end

@@ -1,0 +1,155 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Carrega funções auxiliares
+load './vagrant_helpers.rb'
+
+Vagrant.configure("2") do |config|
+  # Desativa sincronização padrão da pasta atual para /vagrant na VM
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Caminho da chave pública do host Windows para sincronizar com a VM firewall
+  host_ssh_pub_key_path = "C:/Users/Hugo/.ssh/id_rsa.pub"
+
+  # Nome da rede interna usada por todas as VMs
+  NETWORK_NAME = "infraopen_network"
+
+  # ----------------------------
+  # VM FIREWALL
+  # ----------------------------
+  config.vm.define "firewall", primary: true do |node|
+    node.vm.box = "debian/bookworm64"
+    node.vm.hostname = "firewall"
+
+    # Configura a rede
+    node.vm.network "private_network", ip: "192.168.56.254", virtualbox__intnet: NETWORK_NAME, mac: "080027AA0002"
+    node.vm.network "private_network", type: "dhcp", virtualbox__intnet: NETWORK_NAME, mac: "080027AA0001"
+
+    # Configura o provider
+    setup_virtualbox_provider(node, memory: 2048, cpus: 2, name: "firewall")
+
+    # Configura synced folder para compartilhar chaves
+    node.vm.synced_folder "./keys", "/vagrant_shared_keys", create: true
+
+    # Copia a chave pública do host
+    node.vm.provision "file", source: host_ssh_pub_key_path, destination: "/tmp/id_rsa.pub"
+
+    # Configurações específicas da firewall
+    configure_firewall(node)
+
+    # Aplica configurações comuns
+    setup_common(node)
+
+    # Provisiona scripts adicionais
+    provision_scripts(node, ["firewall_provision.sh"])
+
+    # Exporta a chave pública do vagrant@firewall
+    node.vm.provision "shell", inline: <<-SHELL
+      mkdir -p /vagrant_shared_keys
+      cp /home/vagrant/.ssh/id_rsa.pub /vagrant_shared_keys/firewall_vagrant.pub
+      if [ $? -ne 0 ]; then
+        echo "Erro ao copiar a chave pública para /vagrant_shared_keys"
+        exit 1
+      fi
+      rm -f /tmp/id_rsa.pub
+    SHELL
+  end
+
+  # ----------------------------
+  # VMs DNS1 e DNS2
+  # ----------------------------
+  ["dns1", "dns2"].each_with_index do |dns_name, i|
+    config.vm.define dns_name do |node|
+      ip = "192.168.100.#{i + 1}"
+      mac = format("080027BB000%d", i + 1)
+
+      common_vm_config(node, {
+        hostname: dns_name,
+        ip: ip,
+        mac: mac,
+        scripts: ["#{dns_name}_provision.sh"]
+      })
+
+      # Copia chave pública da firewall
+      node.vm.provision "file", source: "./keys/firewall_vagrant.pub", destination: "/tmp/tmp_key/firewall_vagrant.pub"
+
+      # Usa função do helper para autorizar a chave da firewall
+      authorize_firewall_key(node, "vagrant")
+    end
+  end
+
+  # ----------------------------
+  # DEMAIS VMs
+  # ----------------------------
+  vm_configs = [
+    { name: "samba-sftp", mac: "080027BB0003", scripts: ["samba_provision.sh", "sftp_provision.sh"], autostart: true },
+    { name: "webserver-webmin", mac: "080027BB0004", scripts: ["lamp_provision.sh", "webmin_provision.sh"], autostart: true },
+    { name: "syslog-ntp", mac: "080027BB0005", scripts: ["syslog_provision.sh", "ntp_provision.sh"], autostart: true },
+    { name: "ubuntu-desk", box: "gusztavvargadr/ubuntu-desktop", mac: "080027BB0009", scripts: [], autostart: true }
+  ]
+
+  vm_configs.each_with_index do |vm, i|
+    config.vm.define vm[:name], autostart: vm[:autostart] do |node|
+      common_vm_config(node, {
+        hostname: vm[:name],
+        mac: vm[:mac],
+        box: vm[:box] || "debian/bookworm64",
+        scripts: vm[:scripts] || []
+      })
+
+      node.vm.provision "file", source: "./keys/firewall_vagrant.pub", destination: "/tmp/tmp_key/firewall_vagrant.pub"
+      authorize_firewall_key(node, "vagrant")
+    end
+  end
+
+  # ----------------------------
+  # CLUSTER (debian-n1 a n3)
+  # ----------------------------
+  (1..3).each do |i|
+    name = "cluster-n#{i}"
+    mac = format("080027DD%04d", i)
+
+    config.vm.define name, autostart: false do |node|
+      common_vm_config(node, {
+        hostname: name,
+        mac: mac,
+        scripts: []
+      })
+
+      node.vm.provision "file", source: "./keys/firewall_vagrant.pub", destination: "/tmp/tmp_key/firewall_vagrant.pub"
+      authorize_firewall_key(node, "vagrant")
+    end
+  end
+
+  # ----------------------------
+  # Windows 10 VM
+  # ----------------------------
+  config.vm.define "windows10", autostart: false do |node|
+    node.vm.box = "gusztavvargadr/windows-10"
+    node.vm.hostname = "windows10"
+    node.vm.communicator = "winrm"
+
+    node.vm.network "private_network", ip: "192.168.100.100", netmask: "255.255.255.0", virtualbox__intnet: NETWORK_NAME
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.name = "windows10"
+      vb.memory = 6144
+      vb.cpus = 2
+    end
+
+    node.vm.provision "shell", privileged: true, inline: <<-POWERSHELL
+      $password = ConvertTo-SecureString "change-me" -AsPlainText -Force
+      if (-Not (Get-LocalUser -Name "hugom" -ErrorAction SilentlyContinue)) {
+        New-LocalUser -Name "hugom" -Password $password -FullName "Hugo M" -Description "Usuário Hugo" -PasswordNeverExpires
+      }
+      Add-LocalGroupMember -Group "Administrators" -Member "hugom"
+
+      netsh advfirewall firewall add rule name="Allow ICMPv4-In" protocol=icmpv4 dir=in action=allow
+      netsh advfirewall firewall add rule name="Allow ICMPv4-Out" protocol=icmpv4 dir=out action=allow
+
+      Set-ItemProperty -Path "HKLM:\\System\\CurrentControlSet\\Control\\Terminal Server" -Name "fDenyTSConnections" -Value 0
+      Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+      Add-LocalGroupMember -Group "Remote Desktop Users" -Member "hugom"
+    POWERSHELL
+  end
+end

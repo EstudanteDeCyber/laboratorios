@@ -14,13 +14,13 @@ Vagrant.configure("2") do |config|
   # --- IDP01 --- #
   #################
   
-  config.vm.define "IDP01_LAB_IAM" do |idp01|
+  config.vm.define "IDP01_LAB-IAM" do |idp01|
     idp01.vm.box = "debian/bookworm64"
     idp01.vm.hostname = "idp01"
     idp01.vm.network "private_network", ip: "10.10.10.30", virtualbox__intnet: "LAB_IAM", mac: "080027CC4430"
     
     idp01.vm.provider "virtualbox" do |vb|
-      vb.name = "IDP01_LAB_IAM"
+      vb.name = "IDP01_LAB-IAM"
     end
   # Pasta sincronizada local ./scripts/lnx -> /vagrant/synced_scripts na VM
     idp01.vm.synced_folder "scripts/lnx", "/vagrant/synced_scripts"
@@ -43,16 +43,16 @@ Vagrant.configure("2") do |config|
     # --- CLI01 --- #
 	#################
 	
-  config.vm.define "CLI01_LAB_IAM" do |cli01|
-    cli01.vm.box = "gusztavvargadr/windows-10"
-    #cli01.vm.box = "gusztavvargadr/windows-11"
+  config.vm.define "CLI01_LAB-IAM" do |cli01|
+    #cli01.vm.box = "gusztavvargadr/windows-10"
+    cli01.vm.box = "gusztavvargadr/windows-11"
     #cli01.vm.box = "gusztavvargadr/ubuntu-desktop"
     #cli01.vm.box = "gusztavvargadr/ubuntu-desktop-2404-lts"	
     cli01.vm.hostname = "cli01"
     cli01.vm.network "private_network", ip: "10.10.10.32", virtualbox__intnet: "LAB_IAM", mac: "080027CC4432"
   
     cli01.vm.provider "virtualbox" do |vb|
-      vb.name = "CLI01_LAB-AD"
+      vb.name = "CLI01_LAB-IAM"
       vb.gui = true
       vb.memory = 6144
     end
@@ -74,9 +74,13 @@ Vagrant.configure("2") do |config|
     SHELL
 	
     cli01.vm.provision "reload"  
-    
+
 	cli01.vm.provision "shell", name: "install_apps", inline: <<-SHELL
       powershell -ExecutionPolicy Bypass -File "C:\\tmp\\install_apps.ps1"
+    SHELL
+
+	cli01.vm.provision "shell", name: "ajustes1", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\ajustes.ps1"
     SHELL
   
     cli01.vm.provision "reload"
@@ -86,13 +90,13 @@ Vagrant.configure("2") do |config|
   # --- APPs --- #
   ################
   
-  config.vm.define "APPS_LAB_IAM" do |apps|
+  config.vm.define "APPS_LAB-IAM" do |apps|
     apps.vm.box = "debian/bookworm64"
     apps.vm.hostname = "apps"
     apps.vm.network "private_network", ip: "10.10.10.31", virtualbox__intnet: "LAB_IAM", mac: "080027CC4431"
     
     apps.vm.provider "virtualbox" do |vb|
-      vb.name = "APPS_LAB_IAM"
+      vb.name = "APPS_LAB-IAM"
     end
   # Pasta sincronizada local ./scripts/lnx -> /vagrant/synced_scripts na VM
     apps.vm.synced_folder "scripts/lnx", "/vagrant/synced_scripts"
@@ -108,6 +112,6 @@ Vagrant.configure("2") do |config|
     echo "SCRIPTS COPIADOS PARA /ROOT/SCRIPTS COM SUCESSO."
     SHELL
   
-    apps.vm.provision "shell", path: "./scripts/lnx/apps_provision_v6.sh"
+    apps.vm.provision "shell", path: "./scripts/lnx/apps_provision.sh"
   end
 end

@@ -1,0 +1,13 @@
+[Unit]
+Description=Firewall Configuration Script
+After=network.target
+
+[Service]
+ExecStart=/etc/firewall.sh
+ExecReload=/etc/firewall.sh
+Type=oneshot
+RemainAfterExit=true
+User=root
+
+[Install]
+WantedBy=multi-user.target

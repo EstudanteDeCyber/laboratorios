@@ -1,0 +1,106 @@
+✅ Prompt Completo de Solicitação de Laboratório de Infraestrutura Open Source
+
+Objetivo:
+Montar um ambiente de laboratório completo para testes com infraestrutura open source, contendo clusters de diferentes distribuições, armazenamento em rede, backup, gerenciamento de rede e orquestração de containers.
+🖥️ Requisitos de Infraestrutura:
+1️⃣ Cluster RHEL-based
+
+    Quantidade de nós: 3
+
+    Distribuição:  Linux 9
+
+    Recursos mínimos por nó:
+
+        vCPU: 2
+
+        RAM: 2 GB
+
+        Disco: 40 GB
+
+    Rede: 192.168.100.0/24
+
+2️⃣ Cluster Debian-based
+
+    Quantidade de nós: 3
+
+    Distribuição: Debian 12 (Bookworm)
+
+    Recursos mínimos por nó:
+
+        vCPU: 2
+
+        RAM: 2 GB
+
+        Disco: 40 GB
+
+    Rede: 192.168.101.0/24
+
+3️⃣ Servidor NAS (Armazenamento)
+
+    Distribuição: TrueNAS CORE ou SCALE
+
+    Recursos:
+
+        vCPU: 2
+
+        RAM: 4 GB
+
+        Disco: 2×500 GB (ZFS)
+
+    Serviços: NFS, SMB, iSCSI
+
+    Rede: Acesso aos dois clusters
+
+4️⃣ Servidor de Backup (Media/Tape)
+
+    Distribuição: Debian 12 ou AlmaLinux
+
+    Software: Bacula ou Bareos
+
+    Recursos:
+
+        vCPU: 2
+
+        RAM: 2 GB
+
+        Disco: 100 GB (emulação de fita com vchanger ou file)
+
+    Rede: Conectividade com os clusters
+
+5️⃣ Gerenciador de IPs e DNS
+
+    Serviço: Container com phpIPAM ou PowerDNS
+
+    Função: Gerenciar sub-redes, IPs e DNS dos clusters
+
+    Requisitos:
+
+        Docker instalado
+
+        Banco MariaDB/PostgreSQL em container
+
+6️⃣ Servidor de Gerência
+
+    Distribuição: Debian ou AlmaLinux
+
+    Serviço: Webmin
+
+    Recursos:
+
+        vCPU: 1
+
+        RAM: 2 GB
+
+        Disco: 20 GB
+
+    Função: Interface web para gerenciamento básico dos hosts
+
+7️⃣ Orquestração de Containers
+
+    Tecnologias:
+
+        Docker em todos os nós
+
+        Kubernetes (microk8s ou k3s) em pelo menos 1 cluster
+
+    Objetivo: Testes com orquestração, volumes, redes e deploys em ambientes mistos

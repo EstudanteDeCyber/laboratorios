@@ -1,0 +1,69 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# | VM             | IP Privado   | Rede Interna | MAC (exemplo)     |
+# | -------------- | ------------ | ------------ | ----------------- |
+# | lab-controller | 10.10.10.100 | LAB_MICROSEG | 08:00:27:CC:51:00 |
+# | lab-master     | 10.10.10.101 | LAB_MICROSEG | 08:00:27:CC:51:01 |
+# | lab-worker1    | 10.10.10.102 | LAB_MICROSEG | 08:00:27:CC:51:02 |
+# | lab-worker2    | 10.10.10.103 | LAB_MICROSEG | 08:00:27:CC:51:03 |
+# | lab-monitor    | 10.10.10.104 | LAB_MICROSEG | 08:00:27:CC:51:04 |
+# | lab-bastion    | 10.10.10.105 | LAB_MICROSEG | 08:00:27:CC:51:05 |
+
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "debian/bookworm64"
+
+  nodes = [
+    {name: 'lab-controller', ip: '10.10.10.100', mem: 1024},
+    {name: 'lab-master',     ip: '10.10.10.101', mem: 2048},
+    {name: 'lab-worker1',    ip: '10.10.10.102', mem: 1024},
+    {name: 'lab-worker2',    ip: '10.10.10.103', mem: 1024},
+    {name: 'lab-monitor',    ip: '10.10.10.104', mem: 1024},
+    {name: 'lab-bastion',    ip: '10.10.10.105', mem: 512}
+  ]
+
+  base_mac_prefix = "080027CC"
+
+  nodes.each_with_index do |n, i|
+    mac_suffix = "51%02d" % i
+    full_mac = base_mac_prefix + mac_suffix
+
+    config.vm.define n[:name] do |node|
+      node.vm.hostname = n[:name]
+
+      # Interface privada na rede LAB_MICROSEG
+      node.vm.network "private_network",
+                      ip: n[:ip],
+                      virtualbox__intnet: "LAB_MICROSEG",
+                      mac: full_mac
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = n[:name]
+        vb.memory = n[:mem]
+        vb.cpus = 2
+      end
+
+      # Script de provisionamento
+      provision_script = <<-SHELL
+        apt-get update -y
+        apt-get install -y python3 python3-pip sshpass
+      SHELL
+
+      # Controller recebe Ansible e o lab
+      if n[:name] == "lab-controller"
+        provision_script += <<-SHELL
+
+          apt-get install -y ansible make git curl
+          if [ ! -d /home/vagrant/lab ]; then
+            cp -r /vagrant /home/vagrant/lab
+            chown -R vagrant:vagrant /home/vagrant/lab
+          fi
+
+        SHELL
+      end
+
+      node.vm.provision "shell", inline: provision_script
+    end
+  end
+end

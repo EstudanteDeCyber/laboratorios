@@ -1,0 +1,95 @@
+# lab-honeypot/Vagrantfile
+
+Vagrant.configure("2") do |config|
+
+  # Atualizacao da VM
+  config.vm.provision "shell", path: "scripts/atualizacao.sh", privileged: true
+
+  # T-Pot Honeypot VM
+  config.vm.define "TPOT" do |tpot|
+    tpot.vm.box = "ubuntu/jammy64"
+    tpot.vm.hostname = "tpot"
+
+    tpot.vm.provider "virtualbox" do |vb|
+      vb.name = "TPOT"
+      vb.memory = 16384
+      vb.cpus = 4
+    end
+
+    # DMZ network (intnet)
+    tpot.vm.network "private_network", ip: "192.168.50.50", virtualbox__intnet: "DMZNet", mac: "080027BB4481"
+
+    # compartilhar pasta do projeto (opcional)
+    tpot.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
+    # Provision (necessita privilégios)
+    tpot.vm.provision "shell", path: "scripts/tpot-setup.sh", privileged: true
+  end
+
+  # SIEM / ELK Stack
+  config.vm.define "SIEM" do |siem|
+    siem.vm.box = "ubuntu/jammy64"
+    siem.vm.hostname = "siem"
+
+    siem.vm.provider "virtualbox" do |vb|
+      vb.name = "SIEM"
+      vb.memory = 8192
+      vb.cpus = 4
+    end
+
+    siem.vm.network "private_network", ip: "20.20.20.10", virtualbox__intnet: "LANNet", mac: "080027BB4482"
+    siem.vm.provision "shell", path: "scripts/elk-setup.sh", privileged: true
+  end
+
+  # Máquina CLIENTE
+  config.vm.define "CLIENTE" do |cliente|
+    cliente.vm.box = "gusztavvargadr/ubuntu-desktop"
+    cliente.vm.hostname = "CLIENTE"
+
+    cliente.vm.provider "virtualbox" do |vb|
+      vb.name = "CLIENTE"
+      vb.memory = 3072
+      vb.cpus = 2
+    end
+
+    cliente.vm.network "private_network", ip: "20.20.20.11", virtualbox__intnet: "LANNet", mac: "080027BB4483"
+    # CLIENTE deve rodar o script de cliente (desktop) — presume configuração GUI/usuário
+    cliente.vm.provision "shell", path: "scripts/cliente-setup.sh", privileged: true
+  end
+
+  # Máquina ATTACKER
+  config.vm.define "ATTACKER" do |attacker|
+    attacker.vm.box = "debian/bookworm64"
+    attacker.vm.hostname = "attacker"
+
+    attacker.vm.provider "virtualbox" do |vb|
+      vb.name = "ATTACKER"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+
+    # Host-only à qual o atacante estará ligado (se desejar host-only, mantenha; se quiser intnet, troque)
+    attacker.vm.network "private_network", ip: "192.168.56.15", virtualbox__intnet: nil, name: "VirtualBox Host-Only Ethernet Adapter", mac: "080027BB4484"
+    # ATTACKER deve rodar o script de ferramentas ofensivas
+    attacker.vm.provision "shell", path: "scripts/attacker-setup.sh", privileged: true
+  end
+
+  # Máquina FIREWALL
+  config.vm.define "FIREWALL" do |fw|
+    fw.vm.box = "debian/bookworm64"
+    fw.vm.hostname = "firewall"
+
+    fw.vm.provider "virtualbox" do |vb|
+      vb.name = "FIREWALL"
+      vb.memory = 512
+      vb.cpus = 1
+    end
+
+    # Interfaces do firewall: DMZNet, LANNet e host-only
+    fw.vm.network "private_network", ip: "192.168.50.1", virtualbox__intnet: "DMZNet", mac: "080027BB4485"
+    fw.vm.network "private_network", ip: "20.20.20.1", virtualbox__intnet: "LANNet", mac: "080027BB4486"
+    fw.vm.network "private_network", ip: "192.168.56.254", name: "VirtualBox Host-Only Ethernet Adapter", mac: "080027BB4487"
+
+    fw.vm.provision "shell", path: "scripts/firewall-setup.sh", privileged: true
+  end
+end

@@ -1,0 +1,110 @@
+################### metasploitable2 LINUX 10.10.10.30 ############
+# https://github.com/deargle/lab-metasploitable2  
+Vagrant.configure("2") do |config|
+ 
+ # Script para exibir a mensagem final
+ final_message_script = <<-SHELL
+   echo
+   echo "Desligando ao final do provisionamento para ajustes das placas de rede"
+   echo
+   echo "######   %s   IP: %s        ######"
+   echo "VM -->> user: vagrant        password: vagrant"
+   echo "VM -->> user: root           password: vagrant"
+   echo
+   echo "Tire um print dos ips  :))"
+   echo
+   sleep 30
+ SHELL
+ 
+ # Script para configurar SSH e usuários
+ ssh_user_config_script = <<-SHELL
+   # Ajustar SSH e USUÁRIOS
+   echo
+   echo "Ajustando SSH e USUÁRIOS..."
+   echo
+   sudo sed -i 's/^#*PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+   sudo sed -i 's/^#*PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+   sudo systemctl restart ssh
+   echo "vagrant:vagrant" | chpasswd
+   echo "root:vagrant" | chpasswd
+ SHELL
+  
+ # Ajuste de Teclado - Apenas se for Debian
+ ajuste_teclado = <<-SHELL
+   export DEBIAN_FRONTEND=noninteractive
+   echo 'keyboard-configuration keyboard-configuration/layoutcode select br' | debconf-set-selections
+   echo 'keyboard-configuration keyboard-configuration/modelcode select abnt2' | debconf-set-selections
+   echo 'keyboard-configuration keyboard-configuration/variantcode select' | debconf-set-selections
+   NEEDRESTART_MODE=a apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" install keyboard-configuration console-setup console-data
+   dpkg-reconfigure -f noninteractive keyboard-configuration
+   setupcon --force
+   loadkeys br-abnt2 || loadkeys br || echo " Layout de teclado não encontrado"
+ SHELL
+
+  config.vm.define "meta2" do |meta2|
+    meta2.vm.box = "mattglass/metasploitable2-PS"
+	meta2.vm.hostname = "metasploitable2"
+	
+    meta2.vm.provider "virtualbox" do |vb|
+	  vb.name = "Metasploitable2"
+      vb.memory = "512"
+	  vb.cpus = "1"
+    end
+	
+    meta2.vm.provision "shell", inline: ajuste_teclado
+    meta2.vm.provision "shell", inline: ssh_user_config_script
+	
+	meta2.vm.provision "shell", inline: <<-SHELL
+	  cp /etc/network/interfaces /etc/network/interfaces.bak || true
+      cat > /etc/network/interfaces <<EOF
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth1 inet static
+address 10.10.10.20
+netmask 255.255.255.0
+EOF
+	
+    SHELL
+	
+	# Chama o script de mensagem final, passando o nome e IP da VM como argumentos
+	meta2.vm.provision "shell", inline: final_message_script % ["Metasploitable", "10.10.10.20"]
+  end
+
+################ metasploitable3 LINUX 10.10.10.40 ############
+# https://github.com/rapid7/metasploitable3
+
+ config.vm.define "meta3" do |meta3|
+    meta3.vm.box = "rapid7/metasploitable3-ub1404"
+    meta3.vm.hostname = "metasploitable3"
+	config.ssh.username = 'vagrant'
+    config.ssh.password = 'vagrant'
+
+    meta3.vm.provider "virtualbox" do |v|
+      v.name = "Metasploitable3"
+      v.memory = 2048
+    end
+	
+    meta3.vm.provision "shell", inline: ajuste_teclado
+    meta3.vm.provision "shell", inline: ssh_user_config_script
+	
+  config.vm.provision "shell", inline: <<-SHELL
+	  cp /etc/network/interfaces /etc/network/interfaces.bak || true
+      cat > /etc/network/interfaces <<EOF
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth1 inet static
+address 10.10.10.30
+netmask 255.255.255.0
+EOF
+	
+#	shutdown -h now
+    SHELL
+	
+	# Chama o script de mensagem final, passando o nome e IP da VM como argumentos
+    meta3.vm.provision "shell", inline: final_message_script % ["Metasploitable3", "10.10.10.30"]
+  end
+end

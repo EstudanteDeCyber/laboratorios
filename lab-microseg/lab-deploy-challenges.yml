@@ -1,0 +1,91 @@
+---
+- name: Preflight - evitar execução no controller
+  hosts: lab-master
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Garantir que não estamos rodando no lab-controller
+      assert:
+        that: "'lab-controller' not in inventory_hostname"
+        fail_msg: "❌ Tentativa de executar lab-deploy-challenges no lab-controller! Abortando."
+        success_msg: "✔️ Host válido para deploy: {{ inventory_hostname }}"
+
+- name: Aplicar cenários (attacker / pci)
+  hosts: lab-master
+  become: yes
+  vars:
+    manifests_dir: /vagrant/manifests
+  tasks:
+    - name: Aplicar cenário Lateral Movement (attacker + vulnerable) [tag: attacker]
+      tags: attacker
+      shell: |
+        set -euo pipefail
+        echo "Aplicando attacker-vulnerable.yaml..."
+        kubectl apply -f {{ manifests_dir }}/attacker-vulnerable.yaml
+        echo "Aplicando contain-attacker.yaml (idempotente)..."
+        kubectl apply -f {{ manifests_dir }}/contain-attacker.yaml
+      args:
+        warn: false
+
+    - name: Aplicar cenário PCI (deploys e policies) [tag: pci]
+      tags: pci
+      shell: |
+        set -euo pipefail
+        echo "Aplicando pci_style_deploys.yaml..."
+        kubectl apply -f {{ manifests_dir }}/pci_style_deploys.yaml
+        echo "Aplicando pci_policies.yaml..."
+        kubectl apply -f {{ manifests_dir }}/pci_policies.yaml
+      args:
+        warn: false
+
+    - name: Aplicar backend-egress-dns-only (opcional/segurança) [tag: pci]
+      tags: pci
+      shell: |
+        if [ -f {{ manifests_dir }}/backend-egress-dns-only.yaml ]; then
+          echo "Aplicando backend-egress-dns-only.yaml (se presente)..."
+          kubectl apply -f {{ manifests_dir }}/backend-egress-dns-only.yaml || true
+        else
+          echo "backend-egress-dns-only.yaml não encontrado; pulando."
+        fi
+      args:
+        warn: false
+
+    - name: Aguarde pods do namespace app ficarem prontos (timeout 120s)
+      tags: always
+      shell: |
+        kubectl wait --for=condition=Ready pod -n app --all --timeout=120s || true
+      args:
+        warn: false
+
+    - name: Mostrar resumo dos pods (informativo)
+      tags: always
+      shell: kubectl get pods -A -o wide
+      register: pods_status
+      args:
+        warn: false
+
+    - name: Exibir saída resumida dos pods
+      tags: always
+      debug:
+        msg: "{{ pods_status.stdout_lines[:120] | default(pods_status.stdout_lines) }}"
+
+- name: Cleanup dos cenários (remover recursos criados)
+  hosts: lab-master
+  become: yes
+  tasks:
+    - name: Remover resources attacker + pci (tag cleanup)
+      tags: cleanup
+      shell: |
+        set -euo pipefail
+        echo "Deletando attacker-vulnerable..."
+        kubectl delete -f /vagrant/manifests/attacker-vulnerable.yaml --ignore-not-found || true
+        echo "Deletando contain-attacker..."
+        kubectl delete -f /vagrant/manifests/contain-attacker.yaml --ignore-not-found || true
+        echo "Deletando pci policies..."
+        kubectl delete -f /vagrant/manifests/pci_policies.yaml --ignore-not-found || true
+        echo "Deletando pci deploys..."
+        kubectl delete -f /vagrant/manifests/pci_style_deploys.yaml --ignore-not-found || true
+        echo "Deletando backend-egress-dns-only (se existir)..."
+        kubectl delete -f /vagrant/manifests/backend-egress-dns-only.yaml --ignore-not-found || true
+      args:
+        warn: false

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: honeypod
+  namespace: app
+spec:
+  containers:
+  - name: honeypot
+    image: nicolaka/netshoot
+    command: ["sleep","3600"]

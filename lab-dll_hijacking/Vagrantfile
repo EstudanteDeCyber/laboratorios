@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # Timeout e provider defaults
+  config.vm.boot_timeout = 1200
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+
+  #####################
+  # --- Hijacking --- #
+  #####################
+
+  config.vm.define "LAB-DLL_hijacking" do |hijacking|
+    hijacking.vm.box = "gusztavvargadr/windows-11"
+    hijacking.vm.hostname = "hijacking"
+    hijacking.vm.network "private_network", ip: "10.10.10.32", virtualbox__intnet: "LAB_IAM", mac: "080027CC4437"
+  
+    hijacking.vm.provider "virtualbox" do |vb|
+      vb.name = "LAB-DLL_hijacking"
+      vb.gui = true
+      vb.memory = 6144
+    end
+  
+    hijacking.vm.synced_folder "scripts/win", "C:/synced_scripts"
+  
+    # --- PROVISIONAMENTO COMUM A TODAS AS VMs ---
+    hijacking.vm.provision "shell", name: "copy_scripts", inline: <<-PS
+      Write-Host "COPIANDO SCRIPTS DO DIRETORIO DE SINCRONIZACAO PARA C:/TMP...".ToUpper()
+      Remove-Item -Path "C:\\tmp" -Recurse -Force -ErrorAction SilentlyContinue
+      New-Item -Path "C:\\tmp" -ItemType Directory -Force
+      Copy-Item -Path "C:\\synced_scripts\\*" -Destination "C:\\tmp" -Recurse -Force
+      Write-Host "SCRIPTS COPIADOS PARA C:/TMP COM SUCESSO.".ToUpper()
+PS
+
+    hijacking.vm.provision "shell", name: "remove_bloatware", inline: <<-SHELL
+      #powershell -ExecutionPolicy Bypass -File "C:\\tmp\\clean_bloatware_safe.ps1"
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\clean_bloatware_agressive.ps1"
+SHELL
+	
+    hijacking.vm.provision "reload"  
+
+	hijacking.vm.provision "shell", name: "install_apps", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\install_apps.ps1"
+SHELL
+
+	hijacking.vm.provision "shell", name: "ajustes1", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\ajustes.ps1"
+SHELL
+  
+    hijacking.vm.provision "reload"
+
+    hijacking.vm.provision "shell", name: "setup_lab", inline: <<-SHELL
+      powershell -ExecutionPolicy Bypass -File "C:\\tmp\\setup_lab.ps1"
+SHELL
+  end
+end

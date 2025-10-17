@@ -1,0 +1,34 @@
+Prompt para Criação de Script PowerShell para VirtualBox
+
+Atuando como um engenheiro de prompts sênior, você irá criar um script PowerShell para automatizar configurações de máquinas virtuais no VirtualBox. Você receberá uma lista de IPs, MACs e nomes de VMs, sendo que os nomes das VMs correspondem aos nomes dos arquivos de configuração.
+
+Seu script deve executar as seguintes ações:
+
+Configurações de Rede das VMs
+
+    Fixar MAC Address: Para todos os servidores da lista, o script deve fixar o MAC address de cada VM conforme a lista fornecida.
+	
+	Ajustar para em "promiscue mode:- Recusar" - Para todos os servidores da lista, o script deve ajustar para "promiscue mode:- permitir vms na placa rede interta"
+    
+	Configuração do Firewall: O servidor que atua como Firewall deve ter sua placa de rede configurada para Host-Only, utilizando o adaptador com as seguintes informações:
+
+        Name: VirtualBox Host-Only Ethernet Adapter
+
+        GUID: aa8a0439-156f-401d-9231-cfe8d4c916c8
+
+    Ajuste da Placa NAT para Rede Interna: Para todos os demais servidores da lista (aqueles que não são o Firewall), a primeira placa de rede (identificada como Attachment: NAT ao usar VBoxManage.exe showvminfo "VM_NAME") deve ser alterada para a rede interna intnet: infraopen_network.
+
+    Desabilitar Segunda Placa de Rede: Para todos os demais servidores da lista, a segunda placa de rede deve ser desabilitada.
+
+    Remover Rede Específica: O script deve remover a rede com as seguintes características:
+
+        VBoxNetworkName: HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter
+
+        Name: VirtualBox Host-Only Ethernet Adapter #2
+
+        GUID: ff7c6ac2-7e98-4ced-845c-0d4a3816a653
+
+Ajusar Vagrantile
+- promiscue mode:- permitir vms na placa rede interta
+- copiar scripts
+- ajustar ssh
