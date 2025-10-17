@@ -48,37 +48,37 @@ cd /home/vagrant/laboratorios/scripts/
 bash up_all_containers_vuln.sh
 
 # --- Download e Build dos Containers Vulneraveis - NODEGOAT PORTA 4000 ---
-cd /home/vagrant/laboratorios/docker-vuln-NodeGoat/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-NodeGoat/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - SECURITYSHEPERD PORTAS 80 e 443 ---
-cd /home/vagrant/laboratorios/docker-vuln-Securityshepherd/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-Securityshepherd/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - crAPI PORTAS PORTAS 8443 e 8888 ---
-cd /home/vagrant/laboratorios/docker-vuln-crAPI/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-crAPI/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - FLASKAPP PORTA 5050 ---
-cd /home/vagrant/laboratorios/docker-vuln-Flask_App/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-Flask_App/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - FLASKAPP2 PORTA 5000 ---
-cd /home/vagrant/laboratorios/docker-vuln-flask2/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-flask2/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - PiXi PORTA 8000 ---
-cd /home/vagrant/laboratorios/docker-vuln-Pixi/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-Pixi/
 chmod u+x *.sh
 sudo ./setup.sh
 
 # --- Download e Build dos Containers Vulneraveis - BANK PORTA 5005 ---
-cd /home/vagrant/laboratorios/docker-vuln-bank/
+cd /home/vagrant/laboratorios/lab-vuln/docker-vuln-bank/
 chmod u+x *.sh
 sudo ./setup.sh
 
