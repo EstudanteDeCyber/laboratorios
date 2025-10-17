@@ -46,12 +46,12 @@ echo "Iniciando o deploy dos containers de ferramentas ..."
 
 # Horusec
 echo "Configurando Horusec..."
-cd /home/vagrant/laboratorios/horusec
+cd /home/vagrant/laboratorios/lab-tools/horusec
 chmod u+x setup.sh && bash setup.sh
 
 # HashiCorp Vault
 echo "Configurando HashiCorp Vault..."
-cd /home/vagrant/laboratorios/docker-tools-hashicorp_vault/
+cd /home/vagrant/laboratorios/lab-tools/docker-tools-hashicorp_vault/
 chmod u+x setup.sh && sudo bash setup.sh
 sudo chmod 644 /var/services/vault/userconfig/tls/vault.key
 
@@ -62,7 +62,7 @@ bash up_all_containers_tools.sh
 
 # DefectDojo
 echo "Configurando DefectDojo..."
-cd /home/vagrant/laboratorios/docker-tools-django-DefectDojo
+cd /home/vagrant/laboratorios/lab-tools/docker-tools-django-DefectDojo
 chmod u+x setup.sh && bash setup.sh
 
 # --- Ajustar Teclado ---
