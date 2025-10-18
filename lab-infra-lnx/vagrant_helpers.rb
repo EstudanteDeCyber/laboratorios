@@ -35,22 +35,11 @@ def configure_firewall(node)
   setup_virtualbox_provider(node, memory: 2048, cpus: 2, name: "firewall")
   setup_common(node)
 
-  # **** INÍCIO DA CORREÇÃO ****
   # 1. Copia a chave pública do host para a pasta /home/vagrant na VM
   node.vm.provision "file", source: HOST_SSH_PUB_PATH, destination: "/home/vagrant/id_rsa.pub"
 
-  # Criação do usuário hugom, senha root e configuração da chave pública no usuário vagrant
+  # Ajuste senha root e configuração da chave pública no usuário vagrant
   node.vm.provision "shell", inline: <<-SHELL
-    # Criação do usuário hugom se não existir
-    if ! id -u hugom >/dev/null 2>&1; then
-      useradd -m -s /bin/bash hugom
-      echo "hugom:change-me" | chpasswd
-      usermod -aG sudo hugom
-      cp /etc/skel/.bashrc /home/hugom/
-      cp /etc/skel/.profile /home/hugom/
-      chown hugom:hugom /home/hugom/.bashrc /home/hugom/.profile
-    fi
-
     # Senha do root
     echo "root:p@ssw0rd" | chpasswd
 
@@ -63,7 +52,6 @@ def configure_firewall(node)
     chmod 700 /home/vagrant/.ssh
     chmod 600 /home/vagrant/.ssh/authorized_keys
   SHELL
-  # **** FIM DA CORREÇÃO ****
 
   # Gera nova chave para vagrant e exporta a pública
   node.vm.provision "shell", inline: <<-SHELL
@@ -77,7 +65,6 @@ def configure_firewall(node)
   SHELL
 end
 
-# ---
 # Nas outras VMs, aceita a chave gerada pela firewall
 def authorize_firewall_key(node, username)
   node.vm.provision "shell", inline: <<-SHELL
@@ -99,7 +86,6 @@ def authorize_firewall_key(node, username)
   SHELL
 end
 
-# ---
 # Envia scripts e chaves para a VM e executa os scripts
 def provision_scripts(node, scripts)
   node.vm.provision "file", source: "./#{SCRIPT_DIR}", destination: "/tmp/scripts"
@@ -113,7 +99,6 @@ def provision_scripts(node, scripts)
   end
 end
 
-# ---
 # Scripts comuns: atualização e teclado
 def setup_common(node)
   common_scripts = ["atualizacao.sh", "keyboard.sh", "configurar-syslog-chrony.sh"]

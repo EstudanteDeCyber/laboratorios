@@ -49,25 +49,10 @@ function Run-PostInstallScript {
 # PEGA A PASTA ATUAL ONDE O COMANDO ESTA SENDO EXECUTADO
 $ProjectPath = (Get-Location).Path
 
-# Caminho local da pasta scripts (na pasta atual)
-$LocalScriptsPath = Join-Path -Path $ProjectPath -ChildPath "scripts"
+# DEFINE A RAIZ ONDE OS SCRIPTS ESTAO (SEMPRE "laboratorios\scripts")
+$RootScriptsPath = Join-Path -Path (Split-Path $ProjectPath -Parent) -ChildPath "scripts"
 
-# Caminho da pasta scripts na raiz (uma pasta acima)
-$RootScriptsPathDefault = Join-Path -Path (Split-Path $ProjectPath -Parent) -ChildPath "scripts"
-
-# Verifica se existe a pasta scripts na pasta atual
-if (Test-Path $LocalScriptsPath) {
-    $RootScriptsPath = $LocalScriptsPath
-    Write-Host "✅ Usando scripts em: $RootScriptsPath"
-} elseif (Test-Path $RootScriptsPathDefault) {
-    $RootScriptsPath = $RootScriptsPathDefault
-    Write-Host "⚠️ Pasta scripts não encontrada na pasta atual. Usando scripts da raiz: $RootScriptsPath"
-} else {
-    Write-Host "❌ Pasta scripts não encontrada em nenhum dos locais esperados." -ForegroundColor Red
-    exit 1
-}
-
-# VALIDA SE A PASTA DE SCRIPTS EXISTE (redundante, mas mantido para segurança)
+# VALIDA SE A PASTA DE SCRIPTS EXISTE
 if (-not (Test-Path $RootScriptsPath)) {
     Write-Host "❌ DIRETORIO DE SCRIPTS NAO ENCONTRADO: $RootScriptsPath" -ForegroundColor Red
     exit 1
