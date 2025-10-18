@@ -12,4 +12,6 @@ Labs que já foram revisados e podem ser utilizados:
 - lab-tools
 - lab-vuln
 
+Todos os laboratórios são modulares ( você pode escolher o que quer fazer deploy.)
+
 # Estude sem moderacao !!!

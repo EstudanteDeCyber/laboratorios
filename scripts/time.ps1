@@ -4,7 +4,6 @@ $helpMessage = @"
 Uso:
   .\$scriptName .\meu-script.ps1 -arg1 "valor"
   .\$scriptName vagrant -d destroy --vagrantfile=Vagrantfile_custom
-
 Descrição:
 Mede o tempo de execução de um script PowerShell ou comando externo (ex: vagrant, docker), exibindo a saída no console.
 "@
@@ -32,10 +31,8 @@ try {
     if (-not [System.IO.Path]::IsPathRooted($FirstArg)) {
         $FirstArg = Join-Path -Path $CurrentScriptDirectory -ChildPath $FirstArg
     }
-
     # Tenta resolver o caminho do script
     $scriptPath = Resolve-Path -Path $FirstArg -ErrorAction Stop
-
     # Verifica se é um arquivo mesmo
     if (Test-Path -Path $scriptPath -PathType Leaf) {
         $runAsScript = $true
@@ -61,9 +58,8 @@ $executionTime = Measure-Command {
         }
         else {
             # Trata como comando genérico
-            $fullCommand = $args -join ' '
-            Write-Host "Executando comando: $fullCommand" -ForegroundColor Yellow
-            Invoke-Expression $fullCommand
+            Write-Host "Executando comando: $FirstArg $($RemainingArgs -join ' ')" -ForegroundColor Yellow
+            & $FirstArg @RemainingArgs | Out-Default
         }
     }
     catch {
