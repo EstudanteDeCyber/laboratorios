@@ -4,37 +4,13 @@
 # Carrega funções auxiliares
 load './vagrant_helpers.rb'
 
-# ---- helper p/ agrupar no VirtualBox ----
-def set_vbox_group(node, group_path)
-  node.vm.provider "virtualbox" do |vb|
-    # IMPORTANTE: é "--groups" (com 's') e o caminho começa com "/"
-    vb.customize ["modifyvm", :id, "--groups", group_path]
-  end
-end
-
 Vagrant.configure("2") do |config|
   # Desativa sincronização padrão da pasta atual para /vagrant na VM
   config.vm.synced_folder ".", "/vagrant", disabled: true
   # Caminho da chave pública do host Windows para sincronizar com a VM firewall
   host_ssh_pub_key_path = "C:/Users/Hugo/.ssh/id_rsa.pub"
   # Nome da rede interna usada por todas as VMs
-  NETWORK_NAME = "lab-infra-linuxopen_network"
-
-  # --------- Mapa VM -> Grupo (ajuste os caminhos conforme quiser) ---------
-  GROUP_MAP = {
-    # lab-infra-linux
-    "firewall"          => "/lab-infra-linux",
-    "dns1"              => "/lab-infra-linux",
-    "dns2"              => "/lab-infra-linux",
-    "samba-sftp"        => "/lab-infra-linux",
-    "webserver-webmin"  => "/lab-infra-linux",
-    "syslog-ntp"        => "/lab-infra-linux",
-    "ubuntu-desk"       => "/lab-infra-linux",
-    "cluster-n1"        => "/lab-infra-linux",
-    "cluster-n2"        => "/lab-infra-linux",
-    "cluster-n3"        => "/lab-infra-linux",
-    "windows10"         => "/lab-infra-linux"
-  }
+  NETWORK_NAME = "infraopen_network"
 
   # ----------------------------
   # VM FIREWALL
@@ -83,9 +59,6 @@ Vagrant.configure("2") do |config|
       fi
       rm -f /tmp/id_rsa.pub
     SHELL
-
-    # --- AGRUPAMENTO ---
-    set_vbox_group(node, GROUP_MAP["firewall"])
   end
 
   # ----------------------------
@@ -105,9 +78,6 @@ Vagrant.configure("2") do |config|
       node.vm.provision "file", source: "./keys/firewall_vagrant.pub", destination: "/tmp/tmp_key/firewall_vagrant.pub"
       # Usa função do helper para autorizar a chave da firewall
       authorize_firewall_key(node, "vagrant")
-
-      # --- AGRUPAMENTO ---
-      set_vbox_group(node, GROUP_MAP[dns_name])
     end
   end
 
@@ -115,10 +85,10 @@ Vagrant.configure("2") do |config|
   # DEMAIS VMs
   # ----------------------------
   vm_configs = [
-    { name: "samba-sftp",       mac: "080027BB0003", scripts: ["samba_provision.sh", "sftp_provision.sh"],      autostart: true },
-    { name: "webserver-webmin", mac: "080027BB0004", scripts: ["lamp_provision.sh", "webmin_provision.sh"],     autostart: true },
-    { name: "syslog-ntp",       mac: "080027BB0005", scripts: ["syslog_provision.sh", "ntp_provision.sh"],      autostart: true },
-    { name: "ubuntu-desk",      box: "gusztavvargadr/ubuntu-desktop", mac: "080027BB0009", scripts: [],         autostart: true }
+    { name: "samba-sftp", mac: "080027BB0003", scripts: ["samba_provision.sh", "sftp_provision.sh"], autostart: true },
+    { name: "webserver-webmin", mac: "080027BB0004", scripts: ["lamp_provision.sh", "webmin_provision.sh"], autostart: true },
+    { name: "syslog-ntp", mac: "080027BB0005", scripts: ["syslog_provision.sh", "ntp_provision.sh"], autostart: true },
+    { name: "ubuntu-desk", box: "gusztavvargadr/ubuntu-desktop", mac: "080027BB0009", scripts: [], autostart: true }
   ]
   vm_configs.each_with_index do |vm, i|
     config.vm.define vm[:name], autostart: vm[:autostart] do |node|
@@ -130,9 +100,6 @@ Vagrant.configure("2") do |config|
       })
       node.vm.provision "file", source: "./keys/firewall_vagrant.pub", destination: "/tmp/tmp_key/firewall_vagrant.pub"
       authorize_firewall_key(node, "vagrant")
-
-      # --- AGRUPAMENTO ---
-      set_vbox_group(node, GROUP_MAP[vm[:name]])
     end
   end
 
@@ -150,9 +117,6 @@ Vagrant.configure("2") do |config|
       })
       node.vm.provision "file", source: "./keys/firewall_vagrant.pub", destination: "/tmp/tmp_key/firewall_vagrant.pub"
       authorize_firewall_key(node, "vagrant")
-
-      # --- AGRUPAMENTO ---
-      set_vbox_group(node, GROUP_MAP[name])
     end
   end
 
@@ -181,8 +145,5 @@ Vagrant.configure("2") do |config|
       Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
       Add-LocalGroupMember -Group "Remote Desktop Users" -Member "hugom"
     POWERSHELL
-
-    # --- AGRUPAMENTO ---
-    set_vbox_group(node, GROUP_MAP["windows10"])
   end
 end
