@@ -1,22 +1,22 @@
 param (
-    [string]$VagrantArgs = "up" # COMANDO PADRAO É "VAGRANT UP"
+    [string]$VagrantArgs = "up" # COMANDO PADRAO E "VAGRANT UP"
 )
 
-# ⚙️ FUNCAO: DEFINE O VAGRANTFILE BASEADO NO PADRÃO Vagrantfile_*
+# FUNCAO: DEFINE O VAGRANTFILE BASEADO NO PADRAO VAGRANTFILE_*
 function Set-VagrantfileEnv {
     $Vagrantfile = Get-ChildItem -Path . -Filter "Vagrantfile_*" | Select-Object -First 1
     if ($null -eq $Vagrantfile) {
-        Write-Host "❌ NENHUM VAGRANTFILE_* ENCONTRADO NO DIRETÓRIO ATUAL." -ForegroundColor Red
+        Write-Host "❌ NENHUM VAGRANTFILE_* ENCONTRADO NO DIRETORIO ATUAL." -ForegroundColor Red
         exit 1
     }
     $env:VAGRANT_VAGRANTFILE = $Vagrantfile.Name
     Write-Host "✅ VAGRANT_VAGRANTFILE DEFINIDO COMO: $($env:VAGRANT_VAGRANTFILE)"
 }
 
-# ⚙️ FUNÇÃO: EXECUTA O SCRIPT pos_install_<SUFIXO>.ps1 BASEADO NO VAGRANTFILE
+# FUNCAO: EXECUTA O SCRIPT POS_INSTALL_<SUFIXO>.PS1 BASEADO NO VAGRANTFILE
 function Run-PostInstallScript {
     if (-not $env:VAGRANT_VAGRANTFILE) {
-        Write-Host "❌ VAGRANT_VAGRANTFILE NÃO ESTÁ DEFINIDO." -ForegroundColor Red
+        Write-Host "❌ VAGRANT_VAGRANTFILE NAO ESTA DEFINIDO." -ForegroundColor Red
         exit 1
     }
 
@@ -28,7 +28,7 @@ function Run-PostInstallScript {
         Write-Host "EXECUTANDO $ScriptName..."
 
         if (-not (Test-Path $ScriptPath)) {
-            Write-Host "❌ SCRIPT $ScriptName NÃO ENCONTRADO EM $ScriptPath." -ForegroundColor Red
+            Write-Host "❌ SCRIPT $ScriptName NAO ENCONTRADO EM $ScriptPath." -ForegroundColor Red
             exit 1
         }
 
@@ -41,65 +41,81 @@ function Run-PostInstallScript {
 
         Write-Host "✅ $ScriptName EXECUTADO COM SUCESSO." -ForegroundColor Green
     } else {
-        Write-Host "❌ NOME DO VAGRANTFILE NÃO SEGUE O PADRÃO ESPERADO." -ForegroundColor Red
+        Write-Host "❌ NOME DO VAGRANTFILE NAO SEGUE O PADRAO ESPERADO." -ForegroundColor Red
         exit 1
     }
 }
 
-# 📂 OBTÉM A PASTA ATUAL DO PROJETO
+# PEGA A PASTA ATUAL ONDE O COMANDO ESTA SENDO EXECUTADO
 $ProjectPath = (Get-Location).Path
 
-# 📂 DEFINE O CAMINHO DA PASTA SCRIPTS (UM NÍVEL ACIMA DO PROJETO)
-$RootScriptsPath = Join-Path -Path (Split-Path $ProjectPath -Parent) -ChildPath "scripts"
+# Caminho local da pasta scripts (na pasta atual)
+$LocalScriptsPath = Join-Path -Path $ProjectPath -ChildPath "scripts"
 
-# ✅ VALIDA A EXISTÊNCIA DA PASTA DE SCRIPTS
-if (-not (Test-Path $RootScriptsPath)) {
-    Write-Host "❌ DIRETÓRIO DE SCRIPTS NÃO ENCONTRADO: $RootScriptsPath" -ForegroundColor Red
-    exit 1
-} else {
+# Caminho da pasta scripts na raiz (uma pasta acima)
+$RootScriptsPathDefault = Join-Path -Path (Split-Path $ProjectPath -Parent) -ChildPath "scripts"
+
+# Verifica se existe a pasta scripts na pasta atual
+if (Test-Path $LocalScriptsPath) {
+    $RootScriptsPath = $LocalScriptsPath
     Write-Host "✅ Usando scripts em: $RootScriptsPath"
+} elseif (Test-Path $RootScriptsPathDefault) {
+    $RootScriptsPath = $RootScriptsPathDefault
+    Write-Host "⚠️ Pasta scripts não encontrada na pasta atual. Usando scripts da raiz: $RootScriptsPath"
+} else {
+    Write-Host "❌ Pasta scripts não encontrada em nenhum dos locais esperados." -ForegroundColor Red
+    exit 1
+}
+
+# VALIDA SE A PASTA DE SCRIPTS EXISTE (redundante, mas mantido para segurança)
+if (-not (Test-Path $RootScriptsPath)) {
+    Write-Host "❌ DIRETORIO DE SCRIPTS NAO ENCONTRADO: $RootScriptsPath" -ForegroundColor Red
+    exit 1
 }
 
 # ⚙️ DEFINE O VAGRANTFILE AUTOMATICAMENTE
 Set-VagrantfileEnv
 
-# 🗃️ DEFINE DIRETÓRIO PADRÃO DE BOXES DO VAGRANT
+# GARANTE QUE O VAGRANT USE O CATALOGO GLOBAL DE BOXES
 $env:VAGRANT_HOME = "D:\VMs\VirtualBox\Boxes"
 
-# 💾 SALVA O MACHINEFOLDER ATUAL DO VIRTUALBOX (SÓ EXIBE)
+# SALVA O MACHINEFOLDER ATUAL DO VIRTUALBOX (APENAS PARA EXIBICAO)
 $OriginalMachineFolder = (& VBoxManage list systemproperties | Select-String "Default machine folder").ToString().Split(":", 2)[1].Trim()
 Write-Host "MACHINE FOLDER ATUAL: $OriginalMachineFolder"
-Write-Host "DEFININDO MACHINEFOLDER TEMPORÁRIO PARA: $ProjectPath"
+Write-Host "DEFININDO MACHINEFOLDER TEMPORARIO PARA: $ProjectPath"
 
-# 🔁 SETA O MACHINEFOLDER PARA A PASTA DO PROJETO
+# SETA O MACHINEFOLDER PARA A PASTA ATUAL
 VBoxManage setproperty machinefolder "$ProjectPath"
 
-# VAI PARA A PASTA DO PROJETO
+# VAI ATE A PASTA ATUAL
 Push-Location $ProjectPath
 
-# EXECUTA O COMANDO VAGRANT COM OS ARGUMENTOS FORNECIDOS
+# PREPARA OS ARGUMENTOS COMO ARRAY (SPLIT POR ESPACO)
 $ArgList = $VagrantArgs.Split(" ")
+
+# EXECUTA O VAGRANT COM OS ARGUMENTOS RECEBIDOS
 Write-Host "RODANDO: vagrant $VagrantArgs"
 & vagrant @ArgList
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ ERRO AO EXECUTAR 'vagrant $VagrantArgs'. VERIFIQUE OS LOGS PARA DETALHES."
     Pop-Location
+    # DEFINE O MACHINEFOLDER PARA D:\VMs\VirtualBox EM CASO DE ERRO
     Write-Host "RESTAURANDO MACHINEFOLDER PARA: D:\VMs\VirtualBox"
     VBoxManage setproperty machinefolder "D:\VMs\VirtualBox"
     exit $LASTEXITCODE
 }
 
-# 🚀 EXECUTA SCRIPT DE POS-INSTALAÇÃO APENAS SE O COMANDO FOR "UP"
+# 🔁 EXECUTA O POS_INSTALL CORRETO SE COMANDO FOR "UP" OU VAZIO
 if ($VagrantArgs -eq "up" -or $VagrantArgs -eq "") {
     Run-PostInstallScript
 } else {
-    Write-Host "ℹ️ PULANDO EXECUÇÃO DE pos_install.ps1, POIS O COMANDO NÃO É 'UP'."
+    Write-Host "ℹ️ PULANDO EXECUCAO DE pos_install.ps1, POIS O COMANDO NAO E 'UP'."
 }
 
-# VOLTA PARA O LOCAL ORIGINAL
+# VOLTA PARA A PASTA ORIGINAL
 Pop-Location
 
-# 🔄 RESTAURA O MACHINEFOLDER PADRÃO DO VIRTUALBOX
+# DEFINE O MACHINEFOLDER PARA D:\VMs\VirtualBox
 Write-Host "RESTAURANDO MACHINEFOLDER PARA: D:\VMs\VirtualBox"
 VBoxManage setproperty machinefolder "D:\VMs\VirtualBox"
