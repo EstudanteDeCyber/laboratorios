@@ -1,1 +1,0 @@
-{"virtualbox":{"/vagrant_scripts":{"type":"virtualbox","guestpath":"/vagrant_scripts","hostpath":"D:/VMs/VirtualBox/LAB-SOC/scripts","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"D:/VMs/VirtualBox/LAB-SOC","disabled":false,"__vagrantfile":true}}}
