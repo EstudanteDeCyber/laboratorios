@@ -1,18 +1,31 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant.configure("2") do |config|
+# helper para setar grupo no VirtualBox
+def set_vbox_group(node, group_path)
+  node.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--groups", group_path]  # "--groups" com 's'
+  end
+end
 
+Vagrant.configure("2") do |config|
   #####################################################################
-  ##                                                                 ##
-  ## Para rodar capturando os outputs:                               ##
-  ##                                                                 ##
-  ## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append  ##
-  ##                                                                 ##
+  ## Para rodar capturando os outputs:
+  ## vagrant up | Tee-Object -FilePath "vagrant_output.log" -Append
   #####################################################################
 
   config.vm.synced_folder '.', '/vagrant', disabled: true
   config.vm.boot_timeout = 900
+
+  # todas as VMs deste arquivo vão para /LAB-VULN-TOOLS
+  GROUP_MAP = {
+    "Docker-Tools" => "/LAB-VULN-TOOLS",
+    "Kali"         => "/LAB-VULN-TOOLS",
+    "Docker-Vuln"  => "/LAB-VULN-TOOLS",
+    "Meta2"        => "/LAB-VULN-TOOLS",
+    "Meta3"        => "/LAB-VULN-TOOLS",
+    "Meta3-Win"    => "/LAB-VULN-TOOLS",
+  }
 
   # ===================================================================
   #  VM Docker TOOLS - 10.10.10.101
@@ -29,6 +42,9 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
       vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
     end
+
+    # grupo
+    set_vbox_group(node, GROUP_MAP["Docker-Tools"])
 
     node.vm.provision "shell", inline: <<-SHELL
       wget -O /tmp/provisionamento_docker_tools.sh https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/scripts/provisionamento_docker_tools.sh
@@ -53,6 +69,9 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
     end
 
+    # grupo
+    set_vbox_group(kali, GROUP_MAP["Kali"])
+
     kali.vm.provision "shell", inline: <<-SHELL
       wget -O /tmp/provisionamento_kali.sh https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/refs/heads/main/scripts/provisionamento_kali.sh
       chmod +x /tmp/provisionamento_kali.sh
@@ -76,6 +95,9 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
     end
 
+    # grupo
+    set_vbox_group(node, GROUP_MAP["Docker-Vuln"])
+
     node.vm.provision "shell", inline: <<-SHELL
       wget -O /tmp/provisionamento_docker_vuln.sh https://raw.githubusercontent.com/EstudanteDeCyber/laboratorios/main/scripts/provisionamento_docker_vuln.sh
       chmod +x /tmp/provisionamento_docker_vuln.sh
@@ -95,6 +117,9 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
       vb.cpus = "1"
     end
+
+    # grupo
+    set_vbox_group(meta2, GROUP_MAP["Meta2"])
 
     meta2.vm.provision "shell", inline: <<-SHELL
       cp /etc/network/interfaces /etc/network/interfaces.bak || true
@@ -124,6 +149,9 @@ EONET
       vb.memory = 2048
       vb.cpus = "1"
     end
+
+    # grupo
+    set_vbox_group(meta3, GROUP_MAP["Meta3"])
 
     meta3.vm.provision "shell", inline: <<-SHELL
       cp /etc/network/interfaces /etc/network/interfaces.bak || true
@@ -156,6 +184,9 @@ EONET
       vb.memory = 4096
       vb.cpus = 2
     end
+
+    # grupo
+    set_vbox_group(meta3Win, GROUP_MAP["Meta3-Win"])
 
     case ENV['MS3_DIFFICULTY']
     when 'easy'

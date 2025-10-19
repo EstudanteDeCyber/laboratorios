@@ -1,3 +1,14 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Helper p/ setar grupo no VirtualBox
+def set_vbox_group(node, group_path)
+  node.vm.provider "virtualbox" do |vb|
+    # "--groups" (com 's'); caminho absoluto na árvore de grupos
+    vb.customize ["modifyvm", :id, "--groups", group_path]
+  end
+end
+
 Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 1200
   config.vm.communicator = "winrm"
@@ -10,8 +21,16 @@ Vagrant.configure("2") do |config|
     vb.cpus = 2
   end
 
+  # Todas as VMs deste arquivo irão para este grupo
+  GROUP_MAP = {
+    "SRV01_LAB-AD" => "/LAB-AD",
+    "CLI01_LAB-AD" => "/LAB-AD",
+    "DC01_LAB-AD"  => "/LAB-AD",
+  }
+
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder "scripts/", "C:/synced_scripts"
+
   # --- PROVISIONAMENTO COMUM A TODAS AS VMs ---
   config.vm.provision "shell", name: "copy_scripts", privileged: false, inline: <<-PS
     Write-Host "COPIANDO SCRIPTS DO DIRETORIO DE SINCRONIZACAO PARA C:/TMP...".ToUpper()
@@ -34,6 +53,9 @@ Vagrant.configure("2") do |config|
       vb.name = "SRV01_LAB-AD"
     end
 
+    # aplica grupo
+    set_vbox_group(srv01, GROUP_MAP["SRV01_LAB-AD"])
+
     srv01.vm.provision "reload"
 
     srv01.vm.provision "shell", name: "install_rsat", inline: <<-SHELL
@@ -48,11 +70,14 @@ Vagrant.configure("2") do |config|
   # --- CLI01 ---
   config.vm.define "CLI01_LAB-AD" do |cli01|
     cli01.vm.box = "gusztavvargadr/windows-10"
-    cli01.vm.hostname = "CLI01"
+    cli01.vm.hostname = "CLI1"
 
     cli01.vm.provider "virtualbox" do |vb|
       vb.name = "CLI01_LAB-AD"
     end
+
+    # aplica grupo
+    set_vbox_group(cli01, GROUP_MAP["CLI01_LAB-AD"])
 
     cli01.vm.provision "reload"
 
@@ -75,6 +100,9 @@ Vagrant.configure("2") do |config|
       vb.memory = 4096
       vb.cpus = 2
     end
+
+    # aplica grupo
+    set_vbox_group(dc01, GROUP_MAP["DC01_LAB-AD"])
 
     dc01.vm.provision "shell", name: "install_ad", inline: <<-PS
       Write-Host "INSTALANDO A FEATURE AD-DOMAIN-SERVICES...".ToUpper()
