@@ -1,4 +1,13 @@
 #!/bin/bash
+# ===============================================================
+# Define ambiente nao interativo para instalacoes
+# ===============================================================
+export DEBIAN_FRONTEND=noninteractive
+debconf-set-selections <<EOF
+grub-pc grub-pc/install_devices multiselect /dev/sda
+grub-pc grub-pc/install_devices_empty boolean false
+EOF
+
 ## Ajuste timezone
 timedatectl set-timezone America/Sao_Paulo
 
