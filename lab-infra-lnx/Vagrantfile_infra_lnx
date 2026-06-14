@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   # Desativa sincronização padrão da pasta atual para /vagrant na VM
   config.vm.synced_folder ".", "/vagrant", disabled: true
   # Caminho da chave pública do host Windows para sincronizar com a VM firewall
-  host_ssh_pub_key_path = "C:/Users/Hugo/.ssh/id_rsa.pub"
+  host_ssh_pub_key_path = "C:/Users/user.user/.ssh/id_rsa.pub"
   # Nome da rede interna usada por todas as VMs
   NETWORK_NAME = "LAB-INFRA-LNXopen_network"
 
@@ -163,7 +163,7 @@ Vagrant.configure("2") do |config|
     node.vm.box = "gusztavvargadr/windows-10"
     node.vm.hostname = "windows10"
     node.vm.communicator = "winrm"
-    node.vm.network "private_network", ip: "192.168.100.100", netmask: "255.255.255.0", virtualbox__intnet: NETWORK_NAME
+    node.vm.network "private_network", ip: "192.168.100.200", netmask: "255.255.255.0", virtualbox__intnet: NETWORK_NAME
     node.vm.provider "virtualbox" do |vb|
       vb.name = "windows10"
       vb.memory = 6144
@@ -171,15 +171,15 @@ Vagrant.configure("2") do |config|
     end
     node.vm.provision "shell", privileged: true, inline: <<-POWERSHELL
       $password = ConvertTo-SecureString "change-me" -AsPlainText -Force
-      if (-Not (Get-LocalUser -Name "hugom" -ErrorAction SilentlyContinue)) {
-        New-LocalUser -Name "hugom" -Password $password -FullName "Hugo M" -Description "Usuário Hugo" -PasswordNeverExpires
+      if (-Not (Get-LocalUser -Name "user.user" -ErrorAction SilentlyContinue)) {
+        New-LocalUser -Name "user.user" -Password $password -FullName "user.user" -Description "Usuário user.user" -PasswordNeverExpires
       }
-      Add-LocalGroupMember -Group "Administrators" -Member "hugom"
+      Add-LocalGroupMember -Group "Administrators" -Member "user.user"
       netsh advfirewall firewall add rule name="Allow ICMPv4-In" protocol=icmpv4 dir=in action=allow
       netsh advfirewall firewall add rule name="Allow ICMPv4-Out" protocol=icmpv4 dir=out action=allow
       Set-ItemProperty -Path "HKLM:\\System\\CurrentControlSet\\Control\\Terminal Server" -Name "fDenyTSConnections" -Value 0
       Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-      Add-LocalGroupMember -Group "Remote Desktop Users" -Member "hugom"
+      Add-LocalGroupMember -Group "Remote Desktop Users" -Member "user.user"
     POWERSHELL
 
     # --- AGRUPAMENTO ---
