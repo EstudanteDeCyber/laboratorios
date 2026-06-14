@@ -111,7 +111,3 @@ Após a execução completa do `vagrant up`, todas as VMs estarão:
 
 > 🔍 **Nota:** Este README serve apenas como visão geral inicial.  
 > A documentação detalhada de cada VM, scripts e fluxos de rede será adicionada futuramente em seções específicas.
-
----
-
-Quer que eu gere uma **variante visual mais “atrativa”** (com emojis de ícones de servidores, seções coloridas e layout tipo documentação GitHub moderna)? Isso ajuda bastante quando é a capa principal do repositório.
